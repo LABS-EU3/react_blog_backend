@@ -1,5 +1,5 @@
 before_install:
-  - npm i -g npm@version-number
+  - npm i -g npm@10.16.3
 language: node_js
 node_js:
-  - 10.16.3
+  - 10
