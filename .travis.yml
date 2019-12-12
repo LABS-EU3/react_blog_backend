@@ -1,3 +1,5 @@
+before_install:
+  - npm i -g npm@6.11.3
 language: node_js
 node_js:
-  - '10'
+  - 10
