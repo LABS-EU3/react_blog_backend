@@ -1,11 +1,13 @@
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
+const routes = require('./routes');
 
-const server = express();
+const app = express();
 
-server.use(helmet());
-server.use(cors());
-server.use(express.json());
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+routes(app);
 
-module.exports = server;
+module.exports = app;
