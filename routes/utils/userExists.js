@@ -1,6 +1,6 @@
 const db = require("../../data/dbConfig");
 
-module.exports = async function userExists(req, res, next) {
+exports.userExists = async (req, res, next) => {
   let { email } = req.body;
 
   const user = await db("users")

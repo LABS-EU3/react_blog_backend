@@ -10,4 +10,14 @@ async function addNewUser(user) {
   return response;
 }
 
-module.exports = addNewUser;
+async function verifyUser(id) {
+  await db("users")
+    .where({ id: id })
+    .update({ isVerified: 1 });
+  const user = await db("users")
+    .where({ id: id })
+    .first();
+  return user;
+}
+
+module.exports = { addNewUser, verifyUser };
