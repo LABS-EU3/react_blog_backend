@@ -1,6 +1,6 @@
 const db = require("../dbConfig");
 
-async function add(user) {
+async function addNewUser(user) {
   const ids = await db("users").insert(user, "id");
   const id = ids[0];
   const response = await db("users")
@@ -10,4 +10,4 @@ async function add(user) {
   return response;
 }
 
-module.exports = add;
+module.exports = addNewUser;
