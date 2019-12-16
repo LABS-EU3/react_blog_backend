@@ -23,7 +23,7 @@ module.exports = {
     client: "pg",
     connection:
       process.env.DATABASE_URL ||
-      "postgres://postgres:root@127.0.0.1:5432/insight_test",
+      "postgres://postgres:root@127.0.0.1:5432/test",
     pool: {
       min: 2,
       max: 10
