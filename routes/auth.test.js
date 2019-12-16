@@ -22,15 +22,7 @@ describe("POST /api/auth/register", () => {
     const response = await request(server)
       .post("/api/auth/register")
       .send(validMockData);
-    beforeAll(async () => {
-      await db("users").truncate();
-      await db.seed.run();
-    });
 
-    afterAll(async () => {
-      await db("users").truncate();
-      await db.seed.run();
-    });
     expect(response.status).toBe(201);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("username", validMockData.username);
