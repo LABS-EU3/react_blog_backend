@@ -1,11 +1,10 @@
 // Update with your config settings.
-require("dotenv").config({ path: "./env" });
+require("dotenv").config();
 module.exports = {
   development: {
     client: "pg",
     connection:
-      process.env.DATABASE_URL ||
-      "postgres://rfyvlyaf:pg7zAAj1X0EeV4a_yvryaggnaT6V1qhu@rajje.db.elephantsql.com:5432/rfyvlyaf",
+      process.env.DB_URL || "postgres://postgres:root@127.0.0.1:5432/insight",
     pool: {
       min: 2,
       max: 10
@@ -20,13 +19,17 @@ module.exports = {
   },
 
   testing: {
-    client: "pg",
+    client: "postgresql",
     connection:
       process.env.DATABASE_URL ||
-      "postgres://rfyvlyaf:pg7zAAj1X0EeV4a_yvryaggnaT6V1qhu@rajje.db.elephantsql.com:5432/rfyvlyaf",
-    useNullAsDefault: true,
+      "postgres://postgres:root@127.0.0.1:5432/insight_test",
+    pool: {
+      min: 2,
+      max: 10
+    },
     migrations: {
-      directory: "./data/migrations"
+      directory: "./data/migrations",
+      tableName: "db_migrations"
     },
     seeds: {
       directory: "./data/seeds"
