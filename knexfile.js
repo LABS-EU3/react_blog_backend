@@ -4,7 +4,8 @@ module.exports = {
   development: {
     client: "pg",
     connection:
-      process.env.DB_URL || "postgres://postgres:root@127.0.0.1:5432/insight",
+      process.env.DATABASE_URL ||
+      "postgres://postgres:root@127.0.0.1:5432/insight",
     pool: {
       min: 2,
       max: 10
@@ -19,7 +20,7 @@ module.exports = {
   },
 
   testing: {
-    client: "postgresql",
+    client: "pg",
     connection:
       process.env.DATABASE_URL ||
       "postgres://postgres:root@127.0.0.1:5432/insight_test",
