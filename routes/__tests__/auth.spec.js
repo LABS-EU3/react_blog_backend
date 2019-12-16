@@ -1,6 +1,6 @@
 const request = require("supertest");
-const server = require("../app");
-const db = require("../data/dbConfig");
+const server = require("../../app");
+const db = require("../../data/dbConfig");
 
 beforeAll(async () => {
   await db("users").truncate();

@@ -1,9 +1,11 @@
 // Update with your config settings.
-
+require("dotenv").config({ path: "./env" });
 module.exports = {
   development: {
     client: "pg",
-    connection: process.env.DATABASE_URL,
+    connection:
+      process.env.DATABASE_URL ||
+      "postgres://rfyvlyaf:pg7zAAj1X0EeV4a_yvryaggnaT6V1qhu@rajje.db.elephantsql.com:5432/rfyvlyaf",
     pool: {
       min: 2,
       max: 10
@@ -18,21 +20,16 @@ module.exports = {
   },
 
   testing: {
-    client: "sqlite3",
-    connection: {
-      filename: "./data/test.db3"
-    },
+    client: "pg",
+    connection:
+      process.env.DATABASE_URL ||
+      "postgres://rfyvlyaf:pg7zAAj1X0EeV4a_yvryaggnaT6V1qhu@rajje.db.elephantsql.com:5432/rfyvlyaf",
     useNullAsDefault: true,
     migrations: {
       directory: "./data/migrations"
     },
     seeds: {
       directory: "./data/seeds"
-    },
-    pool: {
-      afterCreate: (conn, done) => {
-        conn.run("PRAGMA foreign_keys = ON", done);
-      }
     }
   },
 
