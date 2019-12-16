@@ -18,7 +18,7 @@ before_script:
   - npx knex migrate:down --env=testing
   - npx knex migrate:latest --env=testing
 
-script: npm run test
+script: npm test
 
 notifications:
   email: true
