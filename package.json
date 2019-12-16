@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "server": "nodemon index.js",
-    "test": "cross-env DB_ENV=testing jest"
+    "test": "cross-env DB_ENV=testing jest --verbose --watch"
   },
   "repository": {
     "type": "git",

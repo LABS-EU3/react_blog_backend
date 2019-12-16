@@ -31,7 +31,7 @@ exports.validateSignupData = async (req, res, next) => {
     errors.username = "Must not be empty";
   }
 
-  if (errors)
+  if (Object.keys(errors).length)
     return res.status(400).json({
       errors,
       valid: Object.keys(errors).length === 0 ? true : false
