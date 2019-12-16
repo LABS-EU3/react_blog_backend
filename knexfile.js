@@ -4,7 +4,7 @@ module.exports = {
 
   development: {
     client: 'pg',
-    connection: process.env.DATABASE_URL || 'postgres://lfjhqplk:gbwghABvMjUXhIcnpAZ14LKaAd53mUPM@manny.db.elephantsql.com:5432/lfjhqplk',
+    connection: "postgres://rfyvlyaf:pg7zAAj1X0EeV4a_yvryaggnaT6V1qhu@rajje.db.elephantsql.com:5432/rfyvlyaf",
     pool: {
       min: 2,
       max: 10,

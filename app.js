@@ -8,6 +8,6 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-routes(app);
+// routes(app);
 
 module.exports = app;
