@@ -37,5 +37,6 @@ exports.validateSignupData = async (req, res, next) => {
       valid: Object.keys(errors).length === 0 ? true : false
     });
 
+  req.body = { username, email, password}
   next();
 };

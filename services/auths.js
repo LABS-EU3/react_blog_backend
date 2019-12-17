@@ -4,7 +4,8 @@ const { verifyUser, addNewUser } = require("../data/models/user-model");
 
 exports.registerUser = async user => {
   try {
-    const hash = bcrypt.hashSync(user.password, 10);
+    const { password } = user;
+    const hash = bcrypt.hashSync(password, 10);
     user.password = hash;
     const response = await addNewUser(user);
     sendConfirmationEmail(response.email, response.id);
