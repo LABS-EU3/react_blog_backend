@@ -4,7 +4,8 @@ async function addNewUser(user) {
   try {
     const ids = await db("users").insert(user, "id");
     const id = ids[0];
-    return findUserById(id);
+    const response = await findUserById(id);
+    return response;
   } catch (error) {
     console.log(error);
   }
@@ -27,7 +28,8 @@ async function verifyUser(id) {
     await db("users")
       .where({ id: id })
       .update({ isVerified: 1 });
-    return findUserById(id);
+    const response = await findUserById(id);
+    return response;
   } catch (error) {
     console.log(error);
   }
