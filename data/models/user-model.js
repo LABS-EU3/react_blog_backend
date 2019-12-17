@@ -21,10 +21,15 @@ async function verifyUser(id) {
 }
 
 async function getBy(filter) {
-  const userResponse = await db("users")
-    .select("id", "username")
+  try {
+    const userResponse = await db("users")
+    .select("id", "username", "isVerified")
     .where(filter)
+    .first()
     return userResponse;
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 module.exports = { addNewUser, verifyUser, getBy };

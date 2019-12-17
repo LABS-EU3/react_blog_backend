@@ -1,7 +1,7 @@
 const db = require("../data/dbConfig");
 const bcrypt = require("bcryptjs");
 const sendConfirmationEmail = require("../routes/utils/verificationEmail");
-const { verifyUser } = require("../data/models/user-model");
+const { verifyUser, getBy } = require("../data/models/user-model");
 
 exports.registerUser = async (req, res) => {
   let { email, password, username } = req.body;
@@ -39,15 +39,13 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-exports.loginUser = async (req, res) => {
-  const { username, password } = req.body;
+exports.loginUser = async (userData) => {
+  const { username } = userData;
 
   try {
-    const [user] = await db("users").where({ username })
-    return res.status(200).json(user)
+    const user = await getBy(username)
+    return user;
   } catch (error){
-    res.status(500).json({
-      error: error.message
-    })
+    console.log(error);
   }
 }
