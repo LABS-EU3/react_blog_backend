@@ -20,4 +20,11 @@ async function verifyUser(id) {
   return user;
 }
 
-module.exports = { addNewUser, verifyUser };
+async function getBy(filter) {
+  const userResponse = await db("users")
+    .select("id", "username")
+    .where(filter)
+    return userResponse;
+}
+
+module.exports = { addNewUser, verifyUser, getBy };

@@ -38,3 +38,16 @@ exports.verifyEmail = async (req, res) => {
     });
   }
 };
+
+exports.loginUser = async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const [user] = await db("users").where({ username })
+    return res.status(200).json(user)
+  } catch (error){
+    res.status(500).json({
+      error: error.message
+    })
+  }
+}

@@ -39,3 +39,23 @@ exports.validateSignupData = async (req, res, next) => {
 
   next();
 };
+
+exports.validateLoginData = async (req, res, next) => {
+  let { username, password } = req.body;
+  let errors = {};
+
+  if (isEmpty(username)) {
+    errors.username = "Username is required";
+  }
+
+  if(isEmpty(password)) {
+    errors.password = "Password is required";
+  }
+
+  if(Object.keys(errors).length) 
+    return res.status(400).json({
+      errors,
+      valid: Object.keys(errors).length === 0 ? true : false
+    })
+  next();
+}
