@@ -27,10 +27,7 @@ async function verifyUser(id) {
     await db("users")
       .where({ id: id })
       .update({ isVerified: 1 });
-    const user = await db("users")
-      .where({ id: id })
-      .first();
-    return user;
+    return findUserById(id);
   } catch (error) {
     console.log(error);
   }
