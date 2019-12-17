@@ -1,72 +1,71 @@
 // Update with your config settings.
-
+require("dotenv").config();
 module.exports = {
-
   development: {
-    client: 'pg',
-    connection: process.env.DATABASE_URL || 'postgres://lfjhqplk:gbwghABvMjUXhIcnpAZ14LKaAd53mUPM@manny.db.elephantsql.com:5432/lfjhqplk',
+    client: "pg",
+    connection:
+      process.env.DATABASE_URL ||
+      "postgres://postgres:root@127.0.0.1:5432/insight",
     pool: {
       min: 2,
-      max: 10,
+      max: 10
     },
     migrations: {
-      directory: './data/migrations',
-      tableName: 'db_migrations',
-    },
-    seeds: {
-      directory: './data/seeds',
-    },
-  },
-
-  testing: {
-    client: "sqlite3",
-    connection: {
-      filename: "./data/test.db3"
-    },
-    useNullAsDefault: true,
-    migrations: {
-      directory: "./data/migrations"
+      directory: "./data/migrations",
+      tableName: "db_migrations"
     },
     seeds: {
       directory: "./data/seeds"
-    },
+    }
+  },
+
+  testing: {
+    client: "pg",
+    connection:
+      process.env.DATABASE_URL ||
+      "postgres://postgres:root@127.0.0.1:5432/test",
     pool: {
-      afterCreate: (conn, done) => {
-        conn.run("PRAGMA foreign_keys = ON", done);
-      }
+      min: 2,
+      max: 10
+    },
+    migrations: {
+      directory: "./data/migrations",
+      tableName: "db_migrations"
+    },
+    seeds: {
+      directory: "./data/seeds"
     }
   },
 
   staging: {
-    client: 'pg',
+    client: "pg",
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      database: "my_db",
+      user: "username",
+      password: "password"
     },
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: "knex_migrations"
     }
   },
 
   production: {
-    client: 'postgresql',
+    client: "postgresql",
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      database: "my_db",
+      user: "username",
+      password: "password"
     },
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: "knex_migrations"
     }
   }
-
 };

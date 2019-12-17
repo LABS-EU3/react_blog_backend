@@ -4,8 +4,10 @@
   "description": "A publishing platform",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "server": "nodemon index.js",
-    "test": "cross-env DB_ENV=testing jest"
+    "test": "cross-env DB_ENV=testing jest --detectOpenHandles --verbose --forceExit",
+    "pretest": "npx knex migrate:latest --env=testing"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,7 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
+    "@sendgrid/mail": "^6.4.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -33,6 +36,7 @@
     "helmet": "^3.21.2",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.4",
+    "mailgen": "^2.0.10",
     "pg": "^7.14.0",
     "sqlite3": "^4.1.1"
   }
