@@ -50,7 +50,7 @@ describe("POST /api/auth/login", () => {
   test("should return an HTTP status code of 200 if user logs in successflly", async () => {
     const loginMockData = {
       email: "testuser999@gmail.com",
-      token: "token"
+      password: "password"
     };
 
     const response = await request(server)
@@ -60,13 +60,13 @@ describe("POST /api/auth/login", () => {
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("email", loginMockData.email);
-    expect(response.body).toHaveProperty("token", loginMockData.token);
+    expect(response.body).toHaveProperty("token");
   });
 
   test("should return an HTTP status code of 400 if any of the fields are missing", async () => {
     const wrongLoginMockData = {
-      username: "",
-      password: "testpassword"
+      email: "",
+      password: "password"
     };
 
     const response = await request(server)

@@ -46,7 +46,7 @@ exports.validateLoginData = async (req, res, next) => {
   let errors = {};
 
   if (isEmpty(email)) {
-    errors.username = "Email is required";
+    errors.email = "Email is required";
   }
 
   if(isEmpty(password)) {
