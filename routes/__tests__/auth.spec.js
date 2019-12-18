@@ -51,8 +51,8 @@ describe("POST /api/auth/register", () => {
 describe("POST /api/auth/login", () => {
   test("should return an HTTP status code of 200 if user logs in successflly", async () => {
     const loginMockData = {
-      username: "testuser",
-      password: "password"
+      email: "testuser999@gmail.com",
+      token: "token"
     };
 
     const response = await request(server)
@@ -61,10 +61,8 @@ describe("POST /api/auth/login", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty("username", loginMockData.username);
-    expect(response.body).toHaveProperty("password");
-    expect(response.body).toHaveProperty("jwt");
-    expect(response.body).toHaveProperty("id");
+    expect(response.body).toHaveProperty("email", loginMockData.email);
+    expect(response.body).toHaveProperty("token", loginMockData.token);
   });
 
   test("should return an HTTP status code of 400 if any of the fields are missing", async () => {
