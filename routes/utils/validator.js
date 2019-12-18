@@ -41,11 +41,11 @@ exports.validateSignupData = async (req, res, next) => {
 };
 
 exports.validateLoginData = async (req, res, next) => {
-  let { username, password } = req.body;
+  let { email, password } = req.body;
   let errors = {};
 
-  if (isEmpty(username)) {
-    errors.username = "Username is required";
+  if (isEmpty(email)) {
+    errors.username = "Email is required";
   }
 
   if(isEmpty(password)) {
