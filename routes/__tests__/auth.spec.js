@@ -47,3 +47,38 @@ describe("POST /api/auth/register", () => {
     expect(response.body).toBeInstanceOf(Object);
   });
 });
+
+describe("POST /api/auth/login", () => {
+  test("should return an HTTP status code of 200 if user logs in successflly", async () => {
+    const loginMockData = {
+      username: "testuser",
+      password: "password"
+    };
+
+    const response = await request(server)
+    .post("/api/auth/login")
+    .send(loginMockData)
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("username", loginMockData.username);
+    expect(response.body).toHaveProperty("password");
+    expect(response.body).toHaveProperty("jwt");
+    expect(response.body).toHaveProperty("id");
+  });
+
+  test("should return an HTTP status code of 400 if any of the fields are missing", async () => {
+    const wrongLoginMockData = {
+      username: "",
+      password: "testpassword"
+    };
+
+    const response = await request(server)
+      .post("/api/auth/login")
+      .send(wrongLoginMockData);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toBeInstanceOf(Object);
+
+  })
+})

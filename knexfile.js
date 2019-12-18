@@ -5,7 +5,7 @@ module.exports = {
     client: "pg",
     connection:
       process.env.DATABASE_URL ||
-      "postgres://dbfucrpc:YskUiCOehjAEDZ-jsu0OJ454VGEPbyYF@rajje.db.elephantsql.com:5432/dbfucrpc",
+      "postgres://postgres:root@127.0.0.1:5432/insight",
     pool: {
       min: 2,
       max: 10

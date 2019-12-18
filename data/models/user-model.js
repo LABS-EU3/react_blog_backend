@@ -22,8 +22,8 @@ async function verifyUser(id) {
 
 async function getBy(filter) {
   try {
-    const userResponse = await db("users")
-    .select("id", "username", "isVerified")
+   const userResponse = await db("users")
+    .select("id", "username", "isVerified", "password", "email")
     .where(filter)
     .first()
     return userResponse;

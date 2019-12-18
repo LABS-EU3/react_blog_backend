@@ -19,8 +19,8 @@ exports.checkIfUserDetailsExists = async (req, res, next) => {
   let { username } = req.body;
 
   const user = await db("users")
-    .where({ username: username })
-    .first()
+    // .where(username)
+    // .first()
 
     if(user) next();
     return res.status(404).json({
