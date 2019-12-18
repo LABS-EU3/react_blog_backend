@@ -27,8 +27,6 @@ describe("POST /api/auth/register", () => {
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("username", validMockData.username);
     expect(response.body).toHaveProperty("email", validMockData.email);
-    expect(response.body).toHaveProperty("password");
-    expect(response.body).toHaveProperty("jwt");
     expect(response.body).toHaveProperty("id");
   });
 

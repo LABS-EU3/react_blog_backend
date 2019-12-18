@@ -2,8 +2,7 @@ const auths = require('./auths');
 const { handleError } = require('./utils/errorHandler')
 
 function routes(app) {
-  app.use('/api/auths', auths);
-
+  app.use('/api/auth', auths);
   app.use(handleError);
 }
 
