@@ -1,44 +1,27 @@
-const db = require("../data/dbConfig");
 const bcrypt = require("bcryptjs");
 const sendConfirmationEmail = require("../routes/utils/verificationEmail");
-const { verifyUser, getBy } = require("../data/models/user-model");
+const { verifyUser, getBy, addNewUser } = require("../data/models/user-model");
 const { generateToken } = require("../routes/utils/generateToken");
 
-
-exports.registerUser = async (req, res) => {
-  let { email, password, username } = req.body;
-
+exports.registerUser = async user => {
   try {
+    const { password } = user;
     const hash = bcrypt.hashSync(password, 10);
-    const [id] = await db("users").insert(
-      {
-        email,
-        username,
-        password: hash
-      },
-      "id"
-    );
-    const [user] = await db("users").where({ id });
-    sendConfirmationEmail(email, id);
-    return res.status(201).json(user);
+    user.password = hash;
+    const response = await addNewUser(user);
+    sendConfirmationEmail(response.email, response.id);
+    return response;
   } catch (error) {
-    res.status(500).json({
-      error: error.message
-      
-    });
+    return error.message;
   }
 };
 
-exports.verifyEmail = async (req, res) => {
-  const { id } = req.params;
+exports.verifyEmail = async id => {
   try {
-    const updated = await verifyUser(id);
-
-    res.status(200).json(updated);
+    const updatedUser = await verifyUser(id);
+    return updatedUser;
   } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
+    return error.message;
   }
 };
 

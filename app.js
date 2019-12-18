@@ -1,18 +1,13 @@
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
-const authRouter = require("./routes/auths");
+const routes = require("./routes");
 
 const app = express();
 
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-// routes(app);
-
-app.use("/api/auth", authRouter);
-app.get("/", (req, res) => {
-    res.status(200).json({ api : "running" })
-})
+routes(app);
 
 module.exports = app;
