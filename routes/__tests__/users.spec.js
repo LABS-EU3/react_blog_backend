@@ -35,6 +35,11 @@ describe("GET /api/users/:userId", () => {
       user: { email: "testuser999@gmail.com", id: userId, username: "testuser" }
     });
   });
+
+  test("should return status 404 for user that does not exist", async () => {
+    const response = await request(server).get("/api/users/99999");
+    expect(response.status).toBe(404);
+  });
 });
 
 describe("[GET] /api/users endpoint", () => {
