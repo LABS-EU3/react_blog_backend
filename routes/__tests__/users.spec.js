@@ -36,3 +36,11 @@ describe("GET /api/users/:userId", () => {
     });
   });
 });
+
+describe("[GET] /api/users endpoint", () => {
+  test("should return status 200", async () => {
+    const response = await request(server).get("/api/users");
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+  });
+});
