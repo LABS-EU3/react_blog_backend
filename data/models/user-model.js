@@ -11,6 +11,15 @@ async function addNewUser(user) {
   }
 }
 
+async function findUsers() {
+  try {
+    const users = await db("users").select("id", "username", "email");
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findUserById(id) {
   try {
     const user = await db("users")
@@ -35,4 +44,4 @@ async function verifyUser(id) {
   }
 }
 
-module.exports = { addNewUser, verifyUser };
+module.exports = { addNewUser, verifyUser, findUserById, findUsers };
