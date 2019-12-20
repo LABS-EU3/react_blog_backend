@@ -3,11 +3,11 @@ const server = require("../../app");
 const db = require("../../data/dbConfig");
 
 beforeAll(async () => {
-  await db("users").truncate();
+  await db("users").delete();
 });
 
 afterAll(async () => {
-  await db("users").truncate();
+  await db("users").delete();
 });
 
 describe("GET /api/users/:userId", () => {
@@ -19,20 +19,22 @@ describe("GET /api/users/:userId", () => {
       confirmPassword: "password"
     };
 
-    const userId = 1;
-
     const registerResponse = await request(server)
       .post("/api/auth/register")
       .send(validMockData);
 
     expect(registerResponse.status).toBe(201);
-    expect(registerResponse.body).toHaveProperty("id", userId);
-
+    const userId = registerResponse.body.id;
     const getUserResponse = await request(server).get(`/api/users/${userId}`);
 
     expect(getUserResponse.status).toBe(200);
     expect(getUserResponse.body).toEqual({
-      user: { "avatarUrl": null, email: "testuser999@gmail.com", id: userId, username: "testuser" }
+      user: {
+        avatarUrl: null,
+        email: "testuser999@gmail.com",
+        id: userId,
+        username: "testuser"
+      }
     });
   });
 
