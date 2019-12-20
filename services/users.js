@@ -1,9 +1,9 @@
 const users = require("../data/models/user-model");
 
 async function getUsers() {
-  const allusers = await users.findUsers();
+  const allUsers = await users.findUsers();
 
-  if (!allusers) {
+  if (!allUsers) {
     return { statusCode: 404, data: { message: "Users not found." } };
   } else {
     return { statusCode: 200, data: { data: allusers } };
@@ -19,8 +19,6 @@ async function getUserInfo(userId) {
     return { statusCode: 200, data: { user } };
   }
 }
-
-
 
 module.exports = {
   getUserInfo,
