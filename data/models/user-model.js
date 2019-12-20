@@ -11,10 +11,19 @@ async function addNewUser(user) {
   }
 }
 
+async function findUsers() {
+  try {
+    const users = await db("users").select("id", "username", "email", "avatarUrl");
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findUserById(id) {
   try {
     const user = await db("users")
-      .select("id", "email", "username")
+      .select("id", "email", "username", "avatarUrl")
       .where({ id: id })
       .first();
     return user;
@@ -35,6 +44,7 @@ async function verifyUser(id) {
   }
 }
 
+
 async function getBy(filter) {
   try {
    const userResponse = await db("users")
@@ -46,5 +56,4 @@ async function getBy(filter) {
     console.log(err)
   }
 }
-
-module.exports = { addNewUser, verifyUser, getBy };
+module.exports = { addNewUser, verifyUser, findUserById, findUsers, getBy };
