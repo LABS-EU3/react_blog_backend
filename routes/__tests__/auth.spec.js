@@ -3,11 +3,11 @@ const server = require("../../app");
 const db = require("../../data/dbConfig");
 
 beforeAll(async () => {
-  await db("users").truncate();
+  await db("users").delete();
 });
 
 afterAll(async () => {
-  await db("users").truncate();
+  await db("users").delete();
 });
 
 describe("POST /api/auth/register", () => {
