@@ -10,9 +10,4 @@ app.use(cors());
 app.use(express.json());
 routes(app);
 
-app.get('/', (req, res) => {
-    res.status(200).json({
-        api: "running"
-    })
-})
 module.exports = app;
