@@ -35,4 +35,16 @@ async function verifyUser(id) {
   }
 }
 
-module.exports = { addNewUser, verifyUser };
+async function getBy(filter) {
+  try {
+   const userResponse = await db("users")
+    .select("id", "username", "isVerified", "password", "email")
+    .where(filter)
+    .first()
+    return userResponse;
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+module.exports = { addNewUser, verifyUser, getBy };

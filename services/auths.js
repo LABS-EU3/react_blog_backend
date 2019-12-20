@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const sendConfirmationEmail = require("../routes/utils/verificationEmail");
-const { verifyUser, addNewUser } = require("../data/models/user-model");
+const { verifyUser, getBy, addNewUser } = require("../data/models/user-model");
+const { generateToken } = require("../routes/utils/generateToken");
 
 exports.registerUser = async user => {
   try {
@@ -23,3 +24,22 @@ exports.verifyEmail = async id => {
     return error.message;
   }
 };
+
+exports.loginUser = async (userData) => {
+  const { email, password } = userData;
+
+  try {
+    const user = await getBy({email});
+    if(user && bcrypt.compareSync(password, user.password)) {
+      const token = generateToken(user);
+      return {
+        email,
+        token
+      }
+    }
+   return null;
+
+  } catch (error){
+    console.log(error);
+  }
+}
