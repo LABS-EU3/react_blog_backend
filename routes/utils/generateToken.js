@@ -14,7 +14,7 @@ function generateToken(user) {
     }
     const result = jwt.sign(
       payload,
-      'A SECRET CODE HERE',
+      process.env.SECRET || 'A SECRET CODE HERE',
       options
     )
   
