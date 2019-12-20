@@ -26,14 +26,13 @@ exports.verifyEmail = async id => {
 };
 
 exports.loginUser = async (userData) => {
-  const { email, password, username } = userData;
+  const { email, password } = userData;
 
   try {
     const user = await getBy({email});
     if(user && bcrypt.compareSync(password, user.password)) {
       const token = generateToken(user);
       return {
-        username,
         email,
         token
       }
