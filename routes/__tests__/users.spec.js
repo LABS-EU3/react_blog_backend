@@ -32,7 +32,7 @@ describe("GET /api/users/:userId", () => {
 
     expect(getUserResponse.status).toBe(200);
     expect(getUserResponse.body).toEqual({
-      user: { email: "testuser999@gmail.com", id: userId, username: "testuser" }
+      user: { "avatarUrl": null, email: "testuser999@gmail.com", id: userId, username: "testuser" }
     });
   });
 

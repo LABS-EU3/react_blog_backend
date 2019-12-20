@@ -6,7 +6,7 @@ async function getUsers() {
   if (!allUsers) {
     return { statusCode: 404, data: { message: "Users not found." } };
   } else {
-    return { statusCode: 200, data: { data: allusers } };
+    return { statusCode: 200, data: { data: allUsers } };
   }
 }
 
