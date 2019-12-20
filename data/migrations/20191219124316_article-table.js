@@ -1,7 +1,7 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable("articles", table => {
-      table.integer("id").notNullable().unique();
+      table.increments();
       table.string("title", 128).notNullable();
       table.integer("authorId").unsigned().notNullable().references('id').inTable("users").onUpdate('CASCADE').onDelete('CASCADE');
       table.text("body").notNullable();
