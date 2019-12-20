@@ -14,3 +14,13 @@ exports.userExists = async (req, res, next) => {
 
   next();
 };
+
+exports.checkIfUserDetailsExists = async (req, res, next) => {
+  let { username } = req.body;
+
+  const user = await db("users")
+    if(user) next();
+    return res.status(404).json({
+      error: "User not found"
+    })
+}
