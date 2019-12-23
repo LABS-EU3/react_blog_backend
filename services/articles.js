@@ -1,4 +1,3 @@
-
 const articles = require("../data/models/article-model");
 
 async function findArticles() {
@@ -11,6 +10,18 @@ async function findArticles() {
   }
 }
 
+async function addNewArticle(article) {
+  const response = await articles.addArticle(article);
+  return response;
+}
+
+async function addTag(tag, id) {
+  const response = await articles.addTag({ name: tag, articleId: id });
+  return response;
+}
+
 module.exports = {
- findArticles
+  findArticles,
+  addNewArticle,
+  addTag
 };
