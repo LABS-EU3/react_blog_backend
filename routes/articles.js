@@ -14,18 +14,19 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/publish", async (req, res) => {
-  const { article } = req.body;
-  const tags = article.tags;
+  const article = req.body;
+  const tagsToAdd = article.tags;
   const articleToAdd = _.omit(article, "tags");
   const response_tags = [];
   try {
-    const article = await service.addNewArticle(articleToAdd);
-    const { id } = article;
-    for (const tag of tags) {
+    const response = await service.addNewArticle(articleToAdd);
+    const id = response.id;
+    for (const tag of tagsToAdd) {
       const savedTag = await service.addTag(tag, id);
-      response_tags.concat(savedTag);
+      response_tags.push(savedTag);
     }
-    return res.status(200).json({ ...article, tags: response_tags });
+    console.log(response_tags);
+    return res.status(200).json({ ...response, tags: response_tags });
   } catch (error) {
     res.status(500).json({
       error: error.message

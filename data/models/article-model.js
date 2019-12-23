@@ -14,8 +14,7 @@ async function getArticles() {
 
 async function addArticle(article) {
   try {
-    const ids = await db("articles").insert(article, "id");
-    const id = ids[0];
+    const [id] = await db("articles").insert(article, "id");
     const response = await findArticleById(id);
     return response;
   } catch (error) {
