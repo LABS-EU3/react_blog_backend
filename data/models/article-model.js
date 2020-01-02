@@ -15,11 +15,12 @@ async function getArticles() {
 
 async function getArticlesById(id) {
     try {
-      const user = await db("articles")
+      const articles = await db("articles")
         .select("id", "title", "body", "authorId")
         .where({ id: id })
+        .leftJoin("users as u", "u.id", "=", "a.authorId")
         .first();
-      return user;
+      return articles;
     } catch (error) {
       console.log(error);
     }
