@@ -13,4 +13,17 @@ async function getArticles() {
     }
 }
 
-module.exports = { getArticles };
+async function getArticlesById(id) {
+    try {
+      const user = await db("articles")
+        .select("id", "title", "body", "authorId")
+        .where({ id: id })
+        .first();
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+module.exports = { getArticles, getArticlesById };
