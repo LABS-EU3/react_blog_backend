@@ -16,7 +16,7 @@ async function getArticles() {
 async function getArticlesById(id) {
     try {
       const articles = await db("articles")
-        .select("id", "title", "body", "authorId")
+        .select("id", "title", "body", "authorId", "createdAt","updatedAt")
         .where({ id: id })
         .leftJoin("users as u", "u.id", "=", "a.authorId")
         .first();
