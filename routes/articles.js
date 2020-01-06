@@ -17,16 +17,16 @@ router.post("/publish", async (req, res) => {
   const article = req.body;
   const tagsToAdd = article.tags;
   const articleToAdd = _.omit(article, "tags");
-  const response_tags = [];
+  const responseTags = [];
   try {
     const response = await service.addNewArticle(articleToAdd);
-    const id = response.id;
+    const { id } = response;
     for (const tag of tagsToAdd) {
       const savedTag = await service.addTag(tag, id);
-      response_tags.push(savedTag);
+      responseTags.push(savedTag);
     }
-    console.log(response_tags);
-    return res.status(200).json({ ...response, tags: response_tags });
+    console.log(responseTags);
+    return res.status(200).json({ ...response, tags: responseTags });
   } catch (error) {
     res.status(500).json({
       error: error.message
@@ -35,7 +35,7 @@ router.post("/publish", async (req, res) => {
 });
 
 router.post("/save", async (req, res) => {
-  const { article } = req.body;
+  const article = req.body;
   try {
     const response = await service.addNewArticle(article);
     return res.status(200).json(response);
