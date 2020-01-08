@@ -20,6 +20,7 @@ async function findUsers() {
   }
 }
 
+
 async function findUserById(id) {
   try {
     const user = await db("users")

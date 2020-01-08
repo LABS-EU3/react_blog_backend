@@ -12,6 +12,15 @@ async function getArticles() {
   }
 }
 
+async function findUserArticles() {
+  try {
+    const response = await getArticles();
+    return response;    
+  } catch (error) {
+console.log(error);
+  }
+}
+
 async function addArticle(article) {
   try {
     const [id] = await db("articles").insert(article, "id");
@@ -55,4 +64,4 @@ async function findTagById(id) {
   }
 }
 
-module.exports = { getArticles, addArticle, addTag };
+module.exports = { getArticles, addArticle, addTag, findUserArticles };
