@@ -29,8 +29,37 @@ async function addTag(tag, id) {
   return response;
 }
 
+async function uploadFile(image) {
+  try {
+    const fileContent = fs.readFileSync(image.path);
+
+    const params = {
+      Bucket: 'getinsightly',
+      Key: image.name, // File name you want to save as in S3
+      Body: fileContent
+    };
+
+    
+    const url = new Promise((resolve) => {
+      s3.upload(params, function(err, data) {
+        if (err) {
+            throw err;
+        }
+        resolve(data.Location)
+        console.log(`File uploaded successfully. ${data.Location}`);
+      });
+    })
+
+    return url
+    
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   findArticles,
   addNewArticle,
-  addTag
+  addTag,
+  uploadFile
 };
