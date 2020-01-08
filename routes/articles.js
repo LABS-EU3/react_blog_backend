@@ -1,6 +1,7 @@
 const express = require("express");
 const service = require("../services/articles");
 const _ = require("lodash");
+const formidable = require('formidable')
 
 const router = express.Router();
 
@@ -11,6 +12,28 @@ router.get("/", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.post("/uploadFile", async (req, res) => {
+  const response = {
+    "success" : 1,
+    "file": {
+        "url" : "https://www.tesla.com/tesla_theme/assets/img/_vehicle_redesign/roadster_and_semi/roadster/hero.jpg",
+        // ... and any additional fields you want to store, such as width, height, color, extension, etc
+    }
+  }
+  let form = new formidable.IncomingForm();
+  form.parse(req, function(err, fields, files) {
+    if (err) {
+      console.error(err.message);
+      return;
+    }
+    // send image to services
+    res.json(response);
+    console.log(files)
+  });
+  
+  // res.status(200).json(response);
 });
 
 router.post("/publish", async (req, res) => {
