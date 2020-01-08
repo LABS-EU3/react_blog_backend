@@ -15,26 +15,32 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/uploadFile", async (req, res) => {
-  const response = {
-    "success" : 1,
-    "file": {
-        "url" : "https://www.tesla.com/tesla_theme/assets/img/_vehicle_redesign/roadster_and_semi/roadster/hero.jpg",
-        // ... and any additional fields you want to store, such as width, height, color, extension, etc
-    }
-  }
+  
   let form = new formidable.IncomingForm();
-  form.parse(req, function(err, fields, files) {
+  form.parse(req, async function(err, fields, files) {
     if (err) {
       console.error(err.message);
       return;
     }
-    // send image to services
-    res.json(response);
-    console.log(files)
+
+    const result = await service.uploadFile(files.image);
+    
+    const response = {
+      "success" : 1,
+      "file": {
+          "url" : result,
+          // ... and any additional fields you want to store, such as width, height, color, extension, etc
+      }
+    }
+    res.status(200).json(response);
   });
   
-  // res.status(200).json(response);
+  
 });
+
+router.post('/fetchUrl', (req, res) => {
+  console.log(req)
+})
 
 router.post("/publish", async (req, res) => {
   const article = req.body;
@@ -60,7 +66,8 @@ router.post("/publish", async (req, res) => {
 router.post("/save", async (req, res) => {
   const article = req.body;
   try {
-    const response = await service.addNewArticle(article);
+    const articleToAdd = _.omit(article, "tags");
+    const response = await service.addNewArticle(articleToAdd);
     return res.status(200).json(response);
   } catch (error) {
     res.status(500).json({
