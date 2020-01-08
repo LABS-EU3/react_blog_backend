@@ -45,8 +45,7 @@ async function uploadFile(image) {
         if (err) {
             throw err;
         }
-        resolve(data.Location)
-        console.log(`File uploaded successfully. ${data.Location}`);
+        resolve(data.Location);
       });
     })
 
