@@ -1,6 +1,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable("articles", table => {
     table.increments();
+    table.string("custom_id", 170).notNullable();
     table.string("title", 128).notNullable();
     table
       .integer("authorId")
