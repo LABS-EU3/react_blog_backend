@@ -13,10 +13,9 @@ afterAll(async () => {
 describe("POST /api/auth/register", () => {
   test("should return HTTP status code 201 when successful", async () => {
     const validMockData = {
-      username: "testuser",
+      fullname: "testuser",
       email: "testuser999@gmail.com",
       password: "password",
-      confirmPassword: "password"
     };
 
     const response = await request(server)
@@ -25,14 +24,14 @@ describe("POST /api/auth/register", () => {
 
     expect(response.status).toBe(201);
     expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty("username", validMockData.username);
+    expect(response.body).toHaveProperty("fullname", validMockData.fullname);
     expect(response.body).toHaveProperty("email", validMockData.email);
     expect(response.body).toHaveProperty("id");
   });
 
   test("should return HTTP status code 400 when missing data", async () => {
     const invalidMockData = {
-      username: "testuser",
+      fullname: "testuser",
       email: "",
       password: "testpassword"
     };
