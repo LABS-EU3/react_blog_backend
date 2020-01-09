@@ -1,5 +1,35 @@
 const db = require("../dbConfig");
 
+const following = [
+  {
+    id: 1,
+    title: "Why I love Lambda School",
+    body:
+      '{"{\\"type\\":\\"paragraph\\",\\"data\\":{\\"text\\":\\"Hey. Meet the new Editor. On this page you can see it in action — try to edit this text.\\"}}"}',
+    authorId: 29,
+    author: "Megan Ennis",
+    createdAt: "2019-12-14"
+  },
+  {
+    id: 2,
+    title: "Here's What You Missed at CES 2020",
+    body:
+      '{"{\\"type\\":\\"paragraph\\",\\"data\\":{\\"text\\":\\"Hey. Meet the new Editor. On this page you can see it in action — try to edit this text.\\"}}"}',
+    authorId: 29,
+    author: "Johnson Ogwuru",
+    createdAt: "2019-12-16"
+  },
+  {
+    id: 3,
+    title: "Top Tech Trends for 2020",
+    body:
+      '{"{\\"type\\":\\"paragraph\\",\\"data\\":{\\"text\\":\\"Hey. Meet the new Editor. On this page you can see it in action — try to edit this text.\\"}}"}',
+    authorId: 29,
+    author: "David Kuseh",
+    createdAt: "2018-12-01"
+  }
+];
+
 async function getArticles(userId) {
   let articles = [];
   try {
@@ -13,7 +43,8 @@ async function getArticles(userId) {
         "createdAt",
         "updatedAt"
       )
-      .join("users as u", "u.id", "a.authorId");
+      .join("users as u", "u.id", "a.authorId")
+      .limit(5);
     articles.push(trending);
 
     if (userId) {
@@ -33,6 +64,19 @@ async function getArticles(userId) {
         .where("u.id", userId);
       // .groupBy("a.id");
       articles.push(interests);
+    } else {
+      let generalFeed = await db("articles as a")
+        .select(
+          "a.id",
+          "title",
+          "body",
+          "authorId",
+          "u.username as author",
+          "createdAt",
+          "updatedAt"
+        )
+        .join("users as u", "u.id", "a.authorId");
+      articles.push(generalFeed);
     }
     return articles;
   } catch (error) {
