@@ -85,3 +85,18 @@ async function findTagById(id) {
 }
 
 module.exports = { getArticles, addArticle, addTag };
+async function getArticlesById(id) {
+    try {
+      const articles = await db("articles")
+        .select("id", "title", "body", "authorId", "createdAt","updatedAt")
+        .where({ id: id })
+        .leftJoin("users as u", "u.id", "=", "a.authorId")
+        .first();
+      return articles;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+module.exports = { getArticles, getArticlesById };

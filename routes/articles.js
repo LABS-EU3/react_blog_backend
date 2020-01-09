@@ -76,4 +76,14 @@ router.post("/save", async (req, res) => {
   }
 });
 
+router.get("/:articleId", async (req, res, next) => {
+    try {
+        const { articleId } = req.params;
+        const result = await service.getArticleInfo(articleId);
+        res.status(result.statusCode).json(result.data);
+    } catch (err) {
+        next(err);
+    }
+})
+
 module.exports = router;

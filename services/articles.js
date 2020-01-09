@@ -56,9 +56,21 @@ async function uploadFile(image) {
   }
 }
 
+async function getArticleInfo(articleId) {
+  const article = await articles.getArticlesById(articleId);
+
+  if (!article) {
+    return { statusCode: 404, data: { message: `Cannot find article id of ${articleId}. `} };
+  } else {
+    return { statusCode: 200, data: { article } };
+  }
+}
+
 module.exports = {
   findArticles,
   addNewArticle,
   addTag,
-  uploadFile
+  uploadFile,
+  getArticleInfo
 };
+
