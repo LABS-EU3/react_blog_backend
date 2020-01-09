@@ -13,8 +13,8 @@ Want to take a peek at our deployed project? Check it out here:
 |                 [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/fosterferret)                 |            
 
 ## Project Overview
-[Trello Board](https://trello.com/b/HsuE5rL4/labs) <br>
-[Product Canvas](https://www.notion.so/User-Research-2f765f4dd8234a59bfdef9aa1633d0c0) <br>
+[Trello Board](https://trello.com/b/HsuE5rL4/react-blog) <br>
+[Product Canvas](https://www.notion.so/EU3-React-Blog-4641325fe0384a70948b802b87c0d6f3) <br>
 [UX Design files](https://www.figma.com/file/Y4hxd9F1DLn2FkiExRYudV/avocadosandbox?node-id=1%3A3) <br>
 
 Experience readers reactions/insights into your articles/blog posts as a writer to help you make better writing decisions. Have a more granular engagement platform for as a writer. Enjoy the content of your favourite writers and react appropirately whenever and whever you want.
@@ -34,13 +34,20 @@ Experience readers reactions/insights into your articles/blog posts as a writer 
 - CUSTOM BUILT REST API
 - SENDGRID (For email notifications and newsletter subscriptions)
 - Pusher (For realtime notifications)
+- AWS SDK
 
 # Environment Variables
 For the app to function correctly, the user must set up their own environment variables. There should be a .env file containing the following:
 
-    DATABASE_URL = Hosted on ElephantSQL
-    PORT = port for running the server locally
-    JWT_SECRET = long random string used for generating JWT token
+    AWS_ACCESS_KEY_ID=
+    AWS_SECRET_ACCESS_KEY=
+    AWS_REGION=
+    DB_ENV=development
+    PORT=5000
+    DATABASE_URL=
+    SECRET=
+    SENDGRID_API_KEY=
+    CLIENT_URL
 
 
     ## Project Files Structure
@@ -107,7 +114,7 @@ For the app to function correctly, the user must set up their own environment va
 
 - Locate and tick the checkbox under `Prettier: Eslint Integration` section... You good to go! :sunglasses:
 
-[![Build Status](https://travis-ci.org/bravolabs/bravo-be.svg?branch=develop)](https://travis-ci.org/bravolabs/bravo-be)
+[![Build Status](https://travis-ci.com/LABS-EU3/react_blog_backend.svg?branch=dev)](https://travis-ci.com/LABS-EU3/react_blog_backend)
 
 
 # Contributing
