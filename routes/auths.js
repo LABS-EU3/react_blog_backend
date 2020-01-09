@@ -1,5 +1,4 @@
 const express = require("express");
-const bcrypt = require('bcryptjs');
 const { validateSignupData, validateLoginData } = require("../routes/utils/validator");
 const { userExists } = require("../routes/utils/userExists");
 const { registerUser, verifyEmail, loginUser } = require("../services/auths");
