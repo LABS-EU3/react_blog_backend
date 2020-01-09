@@ -1,58 +1,43 @@
 const db = require("../dbConfig");
 
-async function getArticles() {
+async function getArticles(userId) {
+  let articles = [];
   try {
-    const response = await db("articles as a")
-      .select("a.id", "title", "body", "authorId", "createdAt", "updatedAt")
-      .where("a.authorId", "=", "u.id")
-      .leftJoin("users as u", "u.id", "=", "a.authorId");
-    return response;
+    let trending = await db("articles as a")
+      .select(
+        "a.id",
+        "title",
+        "body",
+        "authorId",
+        "u.username as author",
+        "createdAt",
+        "updatedAt"
+      )
+      .join("users as u", "u.id", "a.authorId");
+    articles.push(trending);
+
+    if (userId) {
+      let interests = await db("articles as a")
+        .select(
+          "u.id",
+          "i.tagId",
+          "t.name",
+          "a.id as articleId",
+          "a.title",
+          "a.body"
+        )
+        .join("articleTags as at", "at.articleId", "a.id")
+        .join("tags as t", "t.id", "at.tagId")
+        .join("interests as i", "i.tagId", "t.id")
+        .join("users as u", "u.id", "i.userId")
+        .where("u.id", userId);
+      // .groupBy("a.id");
+      articles.push(interests);
+    }
+    return articles;
   } catch (error) {
     console.log(error);
   }
 }
 
-async function addArticle(article) {
-  try {
-    const [id] = await db("articles").insert(article, "id");
-    const response = await findArticleById(id);
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function findArticleById(id) {
-  try {
-    const article = await db("articles")
-      .where({ id: id })
-      .first();
-    return article;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function addTag(tag) {
-  try {
-    const ids = await db("tags").insert(tag, "id");
-    const id = ids[0];
-    const response = await findTagById(id);
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function findTagById(id) {
-  try {
-    const tag = await db("tags")
-      .where({ id: id })
-      .first();
-    return tag;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-module.exports = { getArticles, addArticle, addTag };
+module.exports = { getArticles };

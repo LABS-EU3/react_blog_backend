@@ -9,8 +9,8 @@ const s3 = new AWS.S3({
   region: config.AWS_REGION
 });
 
-async function findArticles() {
-  const allArticles = await articles.getArticles();
+async function findArticles(userId) {
+  const allArticles = await articles.getArticles(userId ? userId : null);
 
   if (!allArticles) {
     return { statusCode: 404, data: { message: "Articles not found." } };
