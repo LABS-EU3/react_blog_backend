@@ -1,7 +1,9 @@
-const AWS = require('aws-sdk');
-const fs = require('fs');
+const AWS = require("aws-sdk");
+const fs = require("fs");
 const articles = require("../data/models/article-model");
-const config = require('../config');
+const config = require("../config");
+
+articles.addArticle;
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -34,35 +36,45 @@ async function uploadFile(image) {
     const fileContent = fs.readFileSync(image.path);
 
     const params = {
-      Bucket: 'getinsightly',
+      Bucket: "getinsightly",
       Key: image.name, // File name you want to save as in S3
       Body: fileContent
     };
 
-    
-    const url = new Promise((resolve) => {
+    const url = new Promise(resolve => {
       s3.upload(params, function(err, data) {
         if (err) {
-            throw err;
+          throw err;
         }
         resolve(data.Location);
       });
-    })
+    });
 
-    return url
-    
+    return url;
   } catch (err) {
     console.log(err);
   }
 }
 
 async function getArticleInfo(articleId) {
-  const article = await articles.getArticlesById(articleId);
-
-  if (!article) {
-    return { statusCode: 404, data: { message: `Cannot find article id of ${articleId}. `} };
-  } else {
-    return { statusCode: 200, data: { article } };
+  try {
+    const article = await articles.getArticlesById(articleId);
+    const mystring = article.body.replace(/\\/g, "");
+    const response = {...article, body: mystring}
+    // const body = article.body;
+    // const mystring = body.replace(/\\/g, "");
+    // console.log(JSON.parse(JSON.parse(response)));
+    // const legit = JSON.parse(mystring);
+    if (!article) {
+      return {
+        statusCode: 404,
+        data: { message: `Cannot find article id of ${articleId}. ` }
+      };
+    } else {
+      return { statusCode: 200, data: { response } };
+    }
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -73,4 +85,3 @@ module.exports = {
   uploadFile,
   getArticleInfo
 };
-

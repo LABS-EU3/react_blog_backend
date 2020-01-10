@@ -54,7 +54,7 @@ async function addArticle(article) {
 async function findArticleById(id) {
   try {
     const article = await db("articles")
-      .where({ id: id })
+      .where({ custom_id: id })
       .first();
     return article;
   } catch (error) {
@@ -84,19 +84,17 @@ async function findTagById(id) {
   }
 }
 
-module.exports = { getArticles, addArticle, addTag };
 async function getArticlesById(id) {
     try {
-      const articles = await db("articles")
-        .select("id", "title", "body", "authorId", "createdAt","updatedAt")
-        .where({ id: id })
-        .leftJoin("users as u", "u.id", "=", "a.authorId")
+      const article = await db("articles")
+        .select("articles.id", "title", "body", "authorId", "createdAt","updatedAt")
+        .where({ custom_id: id })
+        .leftJoin("users as u", "u.id", "=", "articles.authorId")
         .first();
-      return articles;
+      return article;
     } catch (error) {
       console.log(error);
     }
   }
 
-
-module.exports = { getArticles, getArticlesById };
+module.exports = { getArticles, addArticle, addTag, getArticlesById };
