@@ -24,9 +24,9 @@ describe("POST /api/auth/register", () => {
 
     expect(response.status).toBe(201);
     expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty("fullname", validMockData.fullname);
-    expect(response.body).toHaveProperty("email", validMockData.email);
-    expect(response.body).toHaveProperty("id");
+    expect(response.body.response).toHaveProperty("fullname", validMockData.fullname);
+    expect(response.body.response).toHaveProperty("email", validMockData.email);
+    expect(response.body.response).toHaveProperty("id");
   });
 
   test("should return HTTP status code 400 when missing data", async () => {

@@ -1,14 +1,15 @@
 const MailGen = require("mailgen");
 const sgMail = require("@sendgrid/mail");
+const config = require("../../config");
 
 require("dotenv").config();
 
-const sendConfirmationEmail = async (userEmail, id) => {
+const sendConfirmationEmail = async (userEmail, token) => {
   const mailGenerator = new MailGen({
     theme: "salted",
     product: {
       name: "Insight App",
-      link: "http://localhost:3000"
+      link: `${config.CLIENT_URL}`
     }
   });
 
@@ -19,9 +20,9 @@ const sendConfirmationEmail = async (userEmail, id) => {
       action: {
         instructions: "Please click the button below to verify your account",
         button: {
-          color: "#33b5e5",
+          color: "#6F85FD",
           text: "Verify account",
-          link: `http://localhost:3300/api/auth/verify/${id}`
+          link: `${config.CLIENT_URL}/profile/?vid=${token}`
         }
       }
     }
@@ -32,7 +33,7 @@ const sendConfirmationEmail = async (userEmail, id) => {
 
   const msg = {
     to: userEmail,
-    from: "notchera@gmail.com",
+    from: "no-reply@insightly.com",
     subject: "Email Verification",
     html: emailTemplate
   };
