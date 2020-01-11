@@ -13,7 +13,7 @@ async function addNewUser(user) {
 
 async function findUsers() {
   try {
-    const users = await db("users").select("id", "username", "email", "avatarUrl");
+    const users = await db("users").select("id", "fullname", "email", "avatarUrl");
     return users;
   } catch (error) {
     console.log(error);
@@ -23,7 +23,7 @@ async function findUsers() {
 async function findUserById(id) {
   try {
     const user = await db("users")
-      .select("id", "email", "username", "avatarUrl")
+      .select("id", "email", "fullname", "jwt", "avatarUrl", "isVerified")
       .where({ id: id })
       .first();
     return user;
@@ -32,10 +32,10 @@ async function findUserById(id) {
   }
 }
 
-async function verifyUser(id) {
+async function verifyUser(token, id) {
   try {
     await db("users")
-      .where({ id: id })
+      .where({ jwt: token })
       .update({ isVerified: 1 });
     const response = await findUserById(id);
     return response;
@@ -48,7 +48,7 @@ async function verifyUser(id) {
 async function getBy(filter) {
   try {
    const userResponse = await db("users")
-    .select("id", "username", "isVerified", "password", "email")
+    .select("id", "fullname", "isVerified", "password", "email")
     .where(filter)
     .first()
     return userResponse;

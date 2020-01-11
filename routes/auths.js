@@ -17,10 +17,10 @@ router.post("/register", validateSignupData, userExists, async (req, res) => {
   }
 });
 
-router.get("/verify/:id", async (req, res) => {
+router.post("/verify/:id/:token", async (req, res) => {
   try {
-    const { id } = req.params;
-    const verifiedUser = await verifyEmail(id);
+    const { token, id } = req.params;
+    const verifiedUser = await verifyEmail(token, id);
     res.status(200).json(verifiedUser);
   } catch (error) {
     res.status(500).json({

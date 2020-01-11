@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-    generateToken
+    generateToken,
+    generateVerificationToken,
 }
 
 function generateToken(user) {
@@ -19,4 +20,13 @@ function generateToken(user) {
     )
   
     return result;
+}
+
+function generateVerificationToken(len, arr) { 
+  var result = ''; 
+  for (var i = len; i > 0; i--) { 
+      result +=  
+        arr[Math.floor(Math.random() * arr.length)]; 
+  } 
+  return result; 
 }

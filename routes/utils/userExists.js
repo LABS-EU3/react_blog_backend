@@ -16,7 +16,7 @@ exports.userExists = async (req, res, next) => {
 };
 
 exports.checkIfUserDetailsExists = async (req, res, next) => {
-  let { username } = req.body;
+  let { fullname } = req.body;
 
   const user = await db("users")
     if(user) next();

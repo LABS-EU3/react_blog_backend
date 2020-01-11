@@ -8,9 +8,8 @@ exports.up = function(knex) {
         .notNullable()
         .unique();
       table
-        .string("username", 128)
-        .notNullable()
-        .unique();
+        .string("fullname", 128)
+        .notNullable();
       table.string("password", 128).notNullable();
       table.string("jwt", 512);
       table
