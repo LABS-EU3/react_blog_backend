@@ -104,7 +104,6 @@ async function getArticlesById(id) {
         "updatedAt"
       )
       .where({ id: id })
-      .leftJoin("users as u", "u.id", "=", "articles.authorId")
       .first();
     return article;
   } catch (error) {
