@@ -37,11 +37,10 @@ async function addArticle(article) {
     // const insert = db('articles')
     //   .insert(article)
     //   .toString();
-    
+
     // const update = db('articles')
     //   .update(article, '*')
     //   .whereRaw('article')
-
 
     const [id] = await db("articles").insert(article, "id");
     const response = await findArticleById(id);
@@ -73,6 +72,15 @@ async function addTag(tag) {
   }
 }
 
+async function getArticleTags(articleId) {
+  try {
+    const tags = await db("tags").where({ articleId: articleId });
+    return tags;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findTagById(id) {
   try {
     const tag = await db("tags")
@@ -85,16 +93,23 @@ async function findTagById(id) {
 }
 
 async function getArticlesById(id) {
-    try {
-      const article = await db("articles")
-        .select("articles.id", "title", "body", "authorId", "createdAt","updatedAt")
-        .where({ custom_id: id })
-        .leftJoin("users as u", "u.id", "=", "articles.authorId")
-        .first();
-      return article;
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    const article = await db("articles")
+      .select(
+        "articles.id",
+        "title",
+        "body",
+        "authorId",
+        "createdAt",
+        "updatedAt"
+      )
+      .where({ id: id })
+      .leftJoin("users as u", "u.id", "=", "articles.authorId")
+      .first();
+    return article;
+  } catch (error) {
+    console.log(error);
   }
+}
 
-module.exports = { getArticles, addArticle, addTag, getArticlesById };
+module.exports = { getArticles, addArticle, getArticleTags, addTag, getArticlesById };

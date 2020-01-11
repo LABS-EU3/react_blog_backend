@@ -59,8 +59,8 @@ async function uploadFile(image) {
 async function getArticleInfo(articleId) {
   try {
     const article = await articles.getArticlesById(articleId);
-    const mystring = article.body.replace(/\\/g, "");
-    const response = {...article, body: mystring}
+    const tags = await articles.getArticleTags(articleId);
+    const response = { ...article, tags };
     // const body = article.body;
     // const mystring = body.replace(/\\/g, "");
     // console.log(JSON.parse(JSON.parse(response)));
