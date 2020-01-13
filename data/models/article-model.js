@@ -1,43 +1,24 @@
 const db = require("../dbConfig");
 
-const mockFollowing = [
-  {
-    id: 1,
-    title: "Why I love Lambda School",
-    body:
-      '{"{\\"type\\":\\"paragraph\\",\\"data\\":{\\"text\\":\\"Hey. Meet the new Editor. On this page you can see it in action — try to edit this text.\\"}}"}',
-    authorId: 29,
-    author: "Megan Ennis",
-    createdAt: "2019-12-14",
-    tags: [{ id: 2, name: "Tech" }]
-  },
-  {
-    id: 2,
-    title: "Here's What You Missed at CES 2020",
-    body:
-      '{"{\\"type\\":\\"paragraph\\",\\"data\\":{\\"text\\":\\"Hey. Meet the new Editor. On this page you can see it in action — try to edit this text.\\"}}"}',
-    authorId: 29,
-    author: "Johnson Ogwuru",
-    createdAt: "2019-12-16",
-    tags: [
-      { id: 1, name: "Business" },
-      { id: 2, name: "Tech" }
-    ]
-  },
-  {
-    id: 3,
-    title: "Top Tech Trends for 2020",
-    body:
-      '{"{\\"type\\":\\"paragraph\\",\\"data\\":{\\"text\\":\\"Hey. Meet the new Editor. On this page you can see it in action — try to edit this text.\\"}}"}',
-    authorId: 29,
-    author: "David Kuseh",
-    createdAt: "2018-12-01",
-    tags: [
-      { id: 2, name: "Tech" },
-      { id: 3, name: "Health & Fitness" }
-    ]
+async function getFollowingArticles() {
+  try {
+    let response = await db("follows as f")
+      .select(
+        "a.id",
+        "title",
+        "body",
+        "authorId",
+        "u.fullname as author",
+        "createdAt",
+        "updatedAt"
+      )
+      .join("users as u", "u.id", "f.followerId")
+      .join("articles as a", "a.authorId", "f.followingId")
+    return response;
+  } catch (error) {
+    console.log(error);
   }
-];
+}
 
 async function getTrendingArticles() {
   try {
@@ -75,7 +56,7 @@ async function getArticlesByUserInterests(id) {
       .join("interests as i", "i.tagId", "t.id")
       .join("users as u", "u.id", "i.userId")
       .where("u.id", id);
-      return response;
+    return response;
   } catch (error) {
     console.log(error);
   }
@@ -107,7 +88,7 @@ async function getArticles(userId) {
     let generalFeed = await getGeneralFeed();
     if (userId) {
       let interests = await getArticlesByUserInterests(userId);
-      let following = mockFollowing;
+      let following = await getFollowingArticles();
       if (!interests.length) {
         articles = {
           trending: trending,
