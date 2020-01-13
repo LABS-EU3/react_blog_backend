@@ -14,8 +14,8 @@ exports.up = function (knex) {
             .integer("followingId")
             .unsigned()
             .notNullable()
-            .references("authorId")
-            .inTable("articles")
+            .references("id")
+            .inTable("users")
             .onUpdate("CASCADE")
             .onDelete("CASCADE")
     });

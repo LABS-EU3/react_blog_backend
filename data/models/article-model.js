@@ -1,19 +1,22 @@
 const db = require("../dbConfig");
 
-async function getFollowingArticles() {
+async function getFollowingArticles(id) {
   try {
     let response = await db("follows as f")
       .select(
-        "a.id",
-        "title",
-        "body",
-        "authorId",
-        "u.fullname as author",
-        "createdAt",
-        "updatedAt"
+        "f.followerId as userId",
+        "f.followingId as authorId",
+        "au.fullname as author",
+        "a.id as articleId",
+        "a.title",
+        "a.body",
+        "a.createdAt",
+        "a.updatedAt"
       )
       .join("users as u", "u.id", "f.followerId")
       .join("articles as a", "a.authorId", "f.followingId")
+      .join("users as au", "au.id", "a.authorId")
+      .where("f.followerId", id);
     return response;
   } catch (error) {
     console.log(error);
@@ -88,13 +91,32 @@ async function getArticles(userId) {
     let generalFeed = await getGeneralFeed();
     if (userId) {
       let interests = await getArticlesByUserInterests(userId);
-      let following = await getFollowingArticles();
+      let following = await getFollowingArticles(userId);
       if (!interests.length) {
-        articles = {
-          trending: trending,
-          mainFeed: generalFeed,
-          following: following
-        };
+        if (!following.length) {
+          articles = {
+            trending: trending,
+            mainFeed: generalFeed
+          };
+        } else {
+          articles = {
+            trending: trending,
+            mainFeed: generalFeed,
+            following: following
+          };
+        }
+      } else if (!following.length) {
+        if (!interests.length) {
+          articles = {
+            trending: trending,
+            mainFeed: generalFeed
+          };
+        } else {
+          articles = {
+            trending: trending,
+            interests: interests
+          };
+        }
       } else {
         articles = {
           trending: trending,
