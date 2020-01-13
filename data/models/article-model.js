@@ -47,7 +47,7 @@ async function getTrendingArticles() {
         "title",
         "body",
         "authorId",
-        "u.username as author",
+        "u.fullname as author",
         "createdAt",
         "updatedAt"
       )
@@ -75,7 +75,7 @@ async function getArticlesByUserInterests(id) {
       .join("interests as i", "i.tagId", "t.id")
       .join("users as u", "u.id", "i.userId")
       .where("u.id", id);
-    return response;
+      return response;
   } catch (error) {
     console.log(error);
   }
@@ -89,7 +89,7 @@ async function getGeneralFeed() {
         "title",
         "body",
         "authorId",
-        "u.username as author",
+        "u.fullname as author",
         "createdAt",
         "updatedAt"
       )
@@ -130,4 +130,47 @@ async function getArticles(userId) {
   }
 }
 
-module.exports = { getArticles };
+async function addArticle(article) {
+  try {
+    const [id] = await db("articles").insert(article, "id");
+    const response = await findArticleById(id);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function findArticleById(id) {
+  try {
+    const article = await db("articles")
+      .where({ id: id })
+      .first();
+    return article;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function addTag(tag) {
+  try {
+    const ids = await db("tags").insert(tag, "id");
+    const id = ids[0];
+    const response = await findTagById(id);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function findTagById(id) {
+  try {
+    const tag = await db("tags")
+      .where({ id: id })
+      .first();
+    return tag;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = { getArticles, addArticle, addTag };
