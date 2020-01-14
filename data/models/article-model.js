@@ -12,36 +12,10 @@ async function getArticles() {
   }
 }
 
-// const insert = db('organizations')
-//       .insert(organization)
-//       .toString();
 
-//     const update = db('organizations')
-//       .update(organization, '*')
-//       .whereRaw('organizations.slack_org_id = ?', [organization.slack_org_id]);
-
-//     const query = util.format(
-//       '%s ON CONFLICT (slack_org_id) DO UPDATE SET %s',
-//       insert.toString(),
-//       update.toString().replace(/^update\s.*\sset\s/i, '')
-//     );
-
-//     let savedOrg;
-//     await db.raw(query).then(res => {
-//       savedOrg = res.rows[0];
-//     });
-//     return savedOrg;
 
 async function addArticle(article) {
   try {
-    // const insert = db('articles')
-    //   .insert(article)
-    //   .toString();
-
-    // const update = db('articles')
-    //   .update(article, '*')
-    //   .whereRaw('article')
-
     const [id] = await db("articles").insert(article, "id");
     const response = await findArticleById(id);
     return response;
@@ -53,7 +27,7 @@ async function addArticle(article) {
 async function findArticleById(id) {
   try {
     const article = await db("articles")
-      .where({ custom_id: id })
+      .where({ id: id })
       .first();
     return article;
   } catch (error) {
