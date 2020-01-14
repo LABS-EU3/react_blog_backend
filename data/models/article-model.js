@@ -46,19 +46,22 @@ async function getTrendingArticles() {
 async function getArticlesByUserInterests(id) {
   try {
     let response = await db("articles as a")
+      .groupBy("a.id")
       .select(
-        "u.id",
-        "i.tagId",
-        "t.name",
-        "a.id as articleId",
+        "a.id",
         "a.title",
-        "a.body"
+        "a.body",
+        "au.id as authorId",
+        "au.fullname as author",
+        "a.createdAt",
+        "a.imageUrl"
       )
-      .join("articleTags as at", "at.articleId", "a.id")
-      .join("tags as t", "t.id", "at.tagId")
-      .join("interests as i", "i.tagId", "t.id")
+      .join("tags as t", "t.articleId", "a.id")
+      .join("interests as i", "i.name", "t.name")
       .join("users as u", "u.id", "i.userId")
-      .where("u.id", id);
+      .join("users as au", "au.id", "a.authorId")
+      .where("i.userId", id)
+      .andWhere("a.isPublished", "true");
     return response;
   } catch (error) {
     console.log(error);
@@ -128,6 +131,18 @@ async function getArticles(userId) {
       articles = { trending: trending, mainFeed: generalFeed };
     }
     return articles;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getTagsByArticleId(id) {
+  try {
+    let response = await db("articles as a")
+      .select("t.id", "t.name")
+      .join("tags as t", "a.id", "t.articleId")
+      .where("a.id", id);
+    return response;
   } catch (error) {
     console.log(error);
   }
