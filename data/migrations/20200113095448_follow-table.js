@@ -1,7 +1,8 @@
 
 exports.up = function (knex) {
     return knex.schema.createTable("follows", table => {
-        table.increments();
+        table
+            .increments();
         table
             .integer("followerId")
             .unsigned()
