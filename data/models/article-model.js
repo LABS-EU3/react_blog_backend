@@ -17,7 +17,9 @@ async function getFollowingArticles(id) {
       .join("users as u", "u.id", "f.followerId")
       .join("articles as a", "a.authorId", "f.followingId")
       .join("users as au", "au.id", "a.authorId")
-      .where("f.followerId", id);
+      .where("f.followerId", id)
+      .andWhere("a.isPublished", "true");
+      
       for (let i = 0; i < articles.length; i++) {
         await getTagsByArticleId(articles[i].id).then(res => {
           response.push({ ...articles[i], tags: res });
@@ -46,6 +48,7 @@ async function getTrendingArticles() {
         "a.coverImageUrl"
       )
       .join("users as u", "u.id", "a.authorId")
+      .where("a.isPublished", "true")
       .limit(5);
 
     for (let i = 0; i < articles.length; i++) {
@@ -96,7 +99,9 @@ async function getArticlesByUserInterests(id) {
 
 async function getGeneralFeed() {
   try {
-    let response = await db("articles as a")
+      let response = [];
+
+    let articles = await db("articles as a")
       .select(
         "a.id",
         "title",
@@ -107,7 +112,15 @@ async function getGeneralFeed() {
         "updatedAt",
         "a.coverImageUrl"
       )
-      .join("users as u", "u.id", "a.authorId");
+      .join("users as u", "u.id", "a.authorId")
+      .where("a.isPublished", "true");
+      
+      for (let i = 0; i < articles.length; i++) {
+        await getTagsByArticleId(articles[i].id).then(res => {
+          response.push({ ...articles[i], tags: res });
+        });
+      }
+
     return response;
   } catch (error) {
     console.log(error);
