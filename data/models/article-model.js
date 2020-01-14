@@ -105,10 +105,19 @@ async function getArticlesById(id) {
       )
       .where({ id: id })
       .first();
-    return article;
+    const [{ fullname }] = await db("users")
+      .select("fullname")
+      .where({ id: article.authorId });
+    return { ...article, authorName: fullname };
   } catch (error) {
     console.log(error);
   }
 }
 
-module.exports = { getArticles, addArticle, getArticleTags, addTag, getArticlesById };
+module.exports = {
+  getArticles,
+  addArticle,
+  getArticleTags,
+  addTag,
+  getArticlesById
+};
