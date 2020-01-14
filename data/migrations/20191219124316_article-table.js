@@ -1,13 +1,8 @@
-exports.up = function (knex) {
+exports.up = function(knex) {
   return knex.schema.createTable("articles", table => {
-    table
-      .increments();
-    table
-      .string("custom_id", 170)
-      .notNullable();
-    table
-      .string("title", 128)
-      .notNullable();
+    table.increments();
+    table.string("custom_id", 170).notNullable();
+    table.string("title", 128).notNullable();
     table
       .integer("authorId")
       .unsigned()
@@ -16,9 +11,7 @@ exports.up = function (knex) {
       .inTable("users")
       .onUpdate("CASCADE")
       .onDelete("CASCADE");
-    table
-      .text("body")
-      .notNullable();
+    table.text("body").notNullable();
     table
       .timestamp("createdAt")
       .notNullable()
@@ -27,15 +20,12 @@ exports.up = function (knex) {
       .timestamp("updatedAt")
       .notNullable()
       .defaultTo(knex.fn.now());
-    table
-      .boolean("isEditing")
-      .notNullable();
-    table
-      .boolean("isPublished")
-      .notNullable();
+    table.boolean("isEditing").notNullable();
+    table.boolean("isPublished").notNullable();
+    table.string("coverImageUrl");
   });
 };
 
-exports.down = function (knex) {
+exports.down = function(knex) {
   return knex.schema.dropTableIfExists("articles");
 };

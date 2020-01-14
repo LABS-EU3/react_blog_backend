@@ -2,21 +2,28 @@ const db = require("../dbConfig");
 
 async function getFollowingArticles(id) {
   try {
-    let response = await db("follows as f")
+    let response = [];
+    let articles = await db("follows as f")
       .select(
-        "f.followerId as userId",
-        "f.followingId as authorId",
-        "au.fullname as author",
-        "a.id as articleId",
-        "a.title",
-        "a.body",
-        "a.createdAt",
-        "a.updatedAt"
+          "a.id",
+          "a.title",
+          "a.body",
+          "f.followingId as authorId",
+          "au.fullname as author",
+          "a.createdAt",
+          "a.updatedAt",
+          "a.coverImageUrl"
       )
       .join("users as u", "u.id", "f.followerId")
       .join("articles as a", "a.authorId", "f.followingId")
       .join("users as au", "au.id", "a.authorId")
       .where("f.followerId", id);
+      for (let i = 0; i < articles.length; i++) {
+        await getTagsByArticleId(articles[i].id).then(res => {
+          response.push({ ...articles[i], tags: res });
+        });
+      }
+
     return response;
   } catch (error) {
     console.log(error);
@@ -25,7 +32,9 @@ async function getFollowingArticles(id) {
 
 async function getTrendingArticles() {
   try {
-    let response = await db("articles as a")
+    let response = [];
+
+    let articles = await db("articles as a")
       .select(
         "a.id",
         "title",
@@ -33,10 +42,18 @@ async function getTrendingArticles() {
         "authorId",
         "u.fullname as author",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "a.coverImageUrl"
       )
       .join("users as u", "u.id", "a.authorId")
       .limit(5);
+
+    for (let i = 0; i < articles.length; i++) {
+      await getTagsByArticleId(articles[i].id).then(res => {
+        response.push({ ...articles[i], tags: res });
+      });
+    }
+
     return response;
   } catch (error) {
     console.log(error);
@@ -45,14 +62,17 @@ async function getTrendingArticles() {
 
 async function getArticlesByUserInterests(id) {
   try {
-    let response = await db("articles as a")
+    let response = [];
+
+    let articles = await db("articles as a")
       .select(
         "a.id",
         "a.title",
         "a.body",
         "au.id as authorId",
         "au.fullname as author",
-        "a.createdAt"
+        "a.createdAt",
+        "a.coverImageUrl"
       )
       .join("tags as t", "t.articleId", "a.id")
       .join("interests as i", "i.name", "t.name")
@@ -61,6 +81,13 @@ async function getArticlesByUserInterests(id) {
       .where("i.userId", id)
       .andWhere("a.isPublished", "true")
       .distinct();
+
+      for (let i = 0; i < articles.length; i++) {
+        await getTagsByArticleId(articles[i].id).then(res => {
+          response.push({ ...articles[i], tags: res });
+        });
+      }
+
     return response;
   } catch (error) {
     console.log(error);
@@ -77,7 +104,8 @@ async function getGeneralFeed() {
         "authorId",
         "u.fullname as author",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "a.coverImageUrl"
       )
       .join("users as u", "u.id", "a.authorId");
     return response;
@@ -190,4 +218,13 @@ async function findTagById(id) {
   }
 }
 
-module.exports = { getArticles, addArticle, addTag };
+module.exports = {
+  getArticles,
+  getFollowingArticles,
+  getArticlesByUserInterests,
+  getGeneralFeed,
+  getTrendingArticles,
+  getTagsByArticleId,
+  addArticle,
+  addTag
+};
