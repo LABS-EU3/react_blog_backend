@@ -127,55 +127,6 @@ async function getGeneralFeed() {
   }
 }
 
-async function getArticles(userId) {
-  let articles;
-  try {
-    let trending = await getTrendingArticles();
-    let generalFeed = await getGeneralFeed();
-    if (userId) {
-      let interests = await getArticlesByUserInterests(userId);
-      let following = await getFollowingArticles(userId);
-      if (!interests.length) {
-        if (!following.length) {
-          articles = {
-            trending: trending,
-            mainFeed: generalFeed
-          };
-        } else {
-          articles = {
-            trending: trending,
-            mainFeed: generalFeed,
-            following: following
-          };
-        }
-      } else if (!following.length) {
-        if (!interests.length) {
-          articles = {
-            trending: trending,
-            mainFeed: generalFeed
-          };
-        } else {
-          articles = {
-            trending: trending,
-            interests: interests
-          };
-        }
-      } else {
-        articles = {
-          trending: trending,
-          interests: interests,
-          following: following
-        };
-      }
-    } else {
-      articles = { trending: trending, mainFeed: generalFeed };
-    }
-    return articles;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 async function getTagsByArticleId(id) {
   try {
     let response = await db("articles as a")
@@ -232,12 +183,10 @@ async function findTagById(id) {
 }
 
 module.exports = {
-  getArticles,
   getFollowingArticles,
   getArticlesByUserInterests,
   getGeneralFeed,
   getTrendingArticles,
-  getTagsByArticleId,
   addArticle,
   addTag
 };
