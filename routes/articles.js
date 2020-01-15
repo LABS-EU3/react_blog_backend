@@ -44,14 +44,14 @@ router.post("/publish", async (req, res) => {
   const tagsToAdd = article.tags;
   const file = article.coverFile;
   const articleToAdd = _.omit(article, ["tags", "coverFile"]);
-  if (file) {
+  const generateURL = async file => {
     try {
-      articleToAdd.coverImageURL = await service.uploadFile(file);
+      return await service.uploadFile(file);
     } catch (error) {
-      articleToAdd.coverImageURL = "";
       console.log(error);
     }
-  }
+  };
+  articleToAdd.coverImageURL = file ? generateURL(file) : "";
   const responseTags = [];
   try {
     const response = await service.addNewArticle(articleToAdd);
