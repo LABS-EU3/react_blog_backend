@@ -20,7 +20,18 @@ async function getUserInfo(userId) {
   }
 }
 
+async function editUserInfo(userInfo, userId) {
+  const user = await users.editUser(userInfo, userId);
+
+  if(!user) {
+    return { statusCode: 404, data: { message: "User does not exist" } };
+  } else {
+    return { statusCode: 200, data: { user } };
+  }
+}
+
 module.exports = {
   getUserInfo,
-  getUsers
+  getUsers,
+  editUserInfo
 };
