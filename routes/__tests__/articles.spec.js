@@ -92,7 +92,6 @@ describe("GET /api/articles", () => {
 
     expect(getArticlesResponse.status).toBe(200);
     expect(getArticlesResponse.body).toHaveProperty("trending");
-    expect(getArticlesResponse.body).not.toHaveProperty("mainFeed");
     expect(getArticlesResponse.body).toHaveProperty("interests");
     expect(getArticlesResponse.body.interests[0].id).toEqual(mockArticle.id);
   });
