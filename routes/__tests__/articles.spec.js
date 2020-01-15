@@ -3,10 +3,12 @@ const server = require("../../app");
 const db = require("../../data/dbConfig");
 
 beforeAll(async () => {
+  await db("users").delete();
   await db("articles").delete();
 });
 
 afterAll(async () => {
+  await db("users").delete();
   await db("articles").delete();
 });
 
@@ -39,5 +41,52 @@ describe("GET /api/articles", () => {
     expect(getArticlesResponse.status).toBe(200);
     expect(getArticlesResponse.body).toHaveProperty("trending");
     expect(getArticlesResponse.body).toHaveProperty("mainFeed");
+  });
+
+  test("Should return array of relevant articles based on users interests in place of main feed if credentials are present and user has interests", async () => {
+    const mockUserData = {
+      email: "test2000@yahoo.com",
+      password: "1234",
+      fullname: "Test User"
+    };
+    const signUpUserResponse = await request(server)
+      .post("/api/auth/register")
+      .send(mockUserData);
+    const token = signUpUserResponse.body.token;
+    const userId = signUpUserResponse.body.response.id;
+
+    const mockArticle = {
+      id: 2,
+      coverImageUrl: "https://images.unsplash.com/photo-1506645292803-579c17d4ba6a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
+      custom_id: 12,
+      title: "Test 2",
+      authorId: userId,
+      body: [
+        {
+          type: "paragraph",
+          data: {
+            text:
+              "Hey. Meet the new Editor. On this page you can see it in action — try to edit this text."
+          }
+        }
+      ],
+      createdAt: "2019-12-12",
+      updatedAt: "2019-12-12",
+      isEditing: false,
+      isPublished: true
+    };
+    await db("articles").insert(mockArticle);
+    await db("tags").insert({name: 'Business', articleId: 2})
+    await db("interests").insert({userId: userId, name: "Business"})
+    
+    const getArticlesResponse = await request(server)
+    .get("/api/articles")
+    .set("Authorization", token);
+
+    expect(getArticlesResponse.status).toBe(200);
+    expect(getArticlesResponse.body).toHaveProperty("trending");
+    expect(getArticlesResponse.body).not.toHaveProperty("mainFeed");
+    expect(getArticlesResponse.body).toHaveProperty("interests");
+    expect(getArticlesResponse.body.interests[0].id).toEqual(mockArticle.id);
   });
 });
