@@ -5,11 +5,17 @@ const db = require("../../data/dbConfig");
 beforeAll(async () => {
   await db("users").delete();
   await db("articles").delete();
+  await db("tags").delete();
+  await db("interests").delete();
+  await db("follows").delete();
 });
 
 afterAll(async () => {
   await db("users").delete();
   await db("articles").delete();
+  await db("tags").delete();
+  await db("interests").delete();
+  await db("follows").delete();
 });
 
 describe("GET /api/articles", () => {
