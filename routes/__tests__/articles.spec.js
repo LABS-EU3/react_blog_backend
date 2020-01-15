@@ -110,8 +110,8 @@ describe("GET /api/articles", () => {
     const signUpUserResponse = await request(server)
       .post("/api/auth/register")
       .send(mockUser);
-    const token = signUpUserResponse.body.token;
-    const userId = signUpUserResponse.body.response.id;
+    const token = await signUpUserResponse.body.token;
+    const userId = await signUpUserResponse.body.response.id;
 
     const signUpAuthorResponse = await request(server)
       .post("/api/auth/register")
