@@ -36,13 +36,22 @@ router.post("/uploadFile", async (req, res) => {
 });
 
 router.post("/fetchUrl", (req, res) => {
-  console.log(req);
+  console.log(req, res);
 });
 
 router.post("/publish", async (req, res) => {
   const article = req.body;
   const tagsToAdd = article.tags;
-  const articleToAdd = _.omit(article, "tags");
+  const file = article.coverFile;
+  const articleToAdd = _.omit(article, ["tags", "coverFile"]);
+  if (file) {
+    try {
+      articleToAdd.coverImageURL = await service.uploadFile(file);
+    } catch (error) {
+      articleToAdd.coverImageURL = "";
+      console.log(error);
+    }
+  }
   const responseTags = [];
   try {
     const response = await service.addNewArticle(articleToAdd);
