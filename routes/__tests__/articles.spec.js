@@ -58,8 +58,8 @@ describe("GET /api/articles", () => {
     const signUpUserResponse = await request(server)
       .post("/api/auth/register")
       .send(mockUserData);
-    const token = await signUpUserResponse.body.token;
-    const userId = await signUpUserResponse.body.response.id;
+    const token = signUpUserResponse.body.token;
+    const userId = signUpUserResponse.body.response.id;
 
     const mockArticle = {
       id: 2,
@@ -92,26 +92,27 @@ describe("GET /api/articles", () => {
 
     expect(getArticlesResponse.status).toBe(200);
     expect(getArticlesResponse.body).toHaveProperty("trending");
+    expect(getArticlesResponse.body).not.toHaveProperty("mainFeed");
     expect(getArticlesResponse.body).toHaveProperty("interests");
     expect(getArticlesResponse.body.interests[0].id).toEqual(mockArticle.id);
   });
 
-  test("Should return additional array of articles written by authors that the user follows if they follow other users", async () => {
-    const mockUser = {
-      email: "test3000@yahoo.com",
-      password: "1234",
-      fullname: "User"
-    };
-    const mockAuthor = {
-      email: "test4000@yahoo.com",
-      password: "1234",
-      fullname: "Author"
-    };
+  const mockUser = {
+    email: "test3000@yahoo.com",
+    password: "1234",
+    fullname: "User"
+  };
+  const mockAuthor = {
+    email: "test4000@yahoo.com",
+    password: "1234",
+    fullname: "Author"
+  };
+  test("Should return additional array of articles written by authors that the user follows if they follow other users", async (done) => {
     const signUpUserResponse = await request(server)
       .post("/api/auth/register")
       .send(mockUser);
-    const token = await signUpUserResponse.body.token;
-    const userId = await signUpUserResponse.body.response.id;
+    const token = signUpUserResponse.body.token;
+    const userId = signUpUserResponse.body.response.id;
 
     const signUpAuthorResponse = await request(server)
       .post("/api/auth/register")
@@ -151,5 +152,6 @@ describe("GET /api/articles", () => {
     expect(getArticlesResponse.body).toHaveProperty("trending");
     expect(getArticlesResponse.body).toHaveProperty("following");
     expect(getArticlesResponse.body.following[0].authorId).toEqual(authorId);
+    done();
   });
 });
