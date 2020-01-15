@@ -16,4 +16,9 @@ describe("GET /api/articles", () => {
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Object);
   });
+  test("response should always return array of trending articles, regardless of whether credentials are present", async () => {
+    const response = await request(server).get("/api/articles");
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("trending");
+  });
 });
