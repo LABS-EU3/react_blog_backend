@@ -39,7 +39,7 @@ async function uploadFile(image) {
       Body: fileContent
     };
 
-    
+
     const url = new Promise((resolve) => {
       s3.upload(params, function(err, data) {
         if (err) {
