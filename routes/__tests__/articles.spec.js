@@ -157,10 +157,12 @@ describe("GET /api/articles", () => {
 });
 
 describe("POST /articles/like/:id endpoint", () => {
+
   test("Should return 404 if no user id or article id present", async () => {
     const response = await request(server).post(`/api/articles/like/${1}`);
     expect(response.status).toBe(404);
   });
+
   test("Should return message asking user to log in to like article if no user id present", async () => {
     const mockUserData = {
       fullname: "Test user",
@@ -173,7 +175,7 @@ describe("POST /articles/like/:id endpoint", () => {
       password: "1234"
     };
 
-    const registerUserResponse = await request(server)
+    await request(server)
       .post("/api/auth/register")
       .send(mockUserData);
     const registerAuthorResponse = await request(server)
@@ -208,5 +210,60 @@ describe("POST /articles/like/:id endpoint", () => {
     expect(likeArticleResponse.text).toEqual(
       '{"message":"Must be logged in to like article."}'
     );
+  });
+  
+  test("Should return status 200, user id, article id and new like count for given article if uesr id and article id present", async () => {
+    const mockUserData = {
+      fullname: "Test user",
+      email: "testuser2@gmail.com",
+      password: "1234"
+    };
+    const mockAuthorData = {
+      fullname: "Test author",
+      email: "testauthor2@gmail.com",
+      password: "1234"
+    };
+
+    const registerUserResponse = await request(server)
+      .post("/api/auth/register")
+      .send(mockUserData);
+    const registerAuthorResponse = await request(server)
+      .post("/api/auth/register")
+      .send(mockAuthorData);
+    const authorId = registerAuthorResponse.body.response.id;
+    const userToken = registerUserResponse.body.token;
+
+    const mockArticle = {
+      id: 2,
+      custom_id: 12,
+      title: "Test 2",
+      authorId: authorId,
+      body: [
+        {
+          type: "paragraph",
+          data: {
+            text:
+              "Hey. Meet the new Editor. On this page you can see it in action — try to edit this text."
+          }
+        }
+      ],
+      isEditing: false,
+      isPublished: true
+    };
+    await db("articles").insert(mockArticle);
+
+    const likeArticleResponse = await request(server)
+      .post(`/api/articles/like/${mockArticle.id}`)
+      .set("Authorization", userToken);
+
+    expect(likeArticleResponse.status).toBe(200);
+    expect(likeArticleResponse.body.message).toEqual(
+      "Successfully liked article"
+    );
+    expect(likeArticleResponse.body.articleId).toBe(`${mockArticle.id}`);
+    expect(likeArticleResponse.body.userId).toBe(
+      registerUserResponse.body.response.id
+    );
+    expect(likeArticleResponse.body).toHaveProperty("newLikeCount");
   });
 });
