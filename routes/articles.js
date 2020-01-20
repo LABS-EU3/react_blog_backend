@@ -49,9 +49,10 @@ router.post("/publish", async (req, res) => {
       return await service.uploadFile(file);
     } catch (error) {
       console.log(error);
+      return "";
     }
   };
-  articleToAdd.coverImageURL = file ? generateURL(file) : "";
+  articleToAdd.coverImageURL = file ? await generateURL(file) : "";
   const responseTags = [];
   try {
     const response = await service.addNewArticle(articleToAdd);
