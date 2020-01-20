@@ -17,15 +17,39 @@ router.get("/", loggedIn, async (req, res, next) => {
   }
 });
 
+router.post("/uploadCover", async (req, res) => {
+  let form = new formidable.IncomingForm();
+  form.parse(req, async function(err, fields, files) {
+    console.log(files);
+    if (err) {
+      console.error(err.message);
+      return;
+    }
+    const result = await service.uploadFile(files);
+    const coverToAdd = { url: result, articleId: files.articleId };
+    try {
+      const response = await service.addCover(coverToAdd);
+      const { id } = response;
+      return res.status(200).json(id);
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
+  });
+});
+
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
+    console.log(files);
     if (err) {
       console.error(err.message);
       return;
     }
 
-    const result = await service.uploadFile(files.image);
+    const result = await service.uploadFile(files);
+    console.log(files);
 
     const response = {
       success: 1,
@@ -44,18 +68,30 @@ router.post("/fetchUrl", (req, res) => {
 
 router.post("/publish", async (req, res) => {
   const article = req.body;
+  console.log("ddddd", article);
   const tagsToAdd = article.tags;
-  const file = article.coverFile;
   const articleToAdd = _.omit(article, ["tags", "coverFile"]);
-  const generateURL = async file => {
+  async function generateURL() {
     try {
-      return await service.uploadFile(file);
+      let form = new formidable.IncomingForm();
+      form.parse(req, async function(err, fields, files) {
+        console.log("files", files);
+        if (err) {
+          console.error(err.message);
+          return;
+        }
+
+        const result = await service.uploadFile(files);
+        console.log("trsult", result);
+        return result;
+      });
     } catch (error) {
       console.log(error);
       return "";
     }
-  };
-  articleToAdd.coverImageURL = file ? await generateURL(file) : "";
+  }
+  let coverImageURL = generateURL();
+  console.log(coverImageURL);
   const responseTags = [];
   try {
     const response = await service.addNewArticle(articleToAdd);

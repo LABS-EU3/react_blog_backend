@@ -54,6 +54,11 @@ async function addNewArticle(article) {
   return response;
 }
 
+async function addNewCover(cover) {
+  const response = await articles.addCover(cover);
+  return response;
+}
+
 async function addTag(tag, id) {
   const response = await articles.addTag({ name: tag, articleId: id });
   return response;
@@ -111,5 +116,6 @@ module.exports = {
   addNewArticle,
   addTag,
   uploadFile,
-  getArticleInfo
+  getArticleInfo,
+  addNewCover
 };
