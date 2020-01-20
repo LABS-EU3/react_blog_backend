@@ -1,30 +1,52 @@
 const db = require("../dbConfig");
 
+async function addArticleLike(articleLike) {
+  try {
+    const ids = await db("articleLikes as al").insert(articleLike, "id");
+    const id = ids[0];
+    return id;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getLikeCountByArticleId(id) {
+  try {
+    let response = await db("articleLikes")
+      .count()
+      .where("articleId", id)
+      .first();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getFollowingArticles(id) {
   try {
     let response = [];
     let articles = await db("follows as f")
       .select(
-          "a.id",
-          "a.title",
-          "a.body",
-          "f.followingId as authorId",
-          "au.fullname as author",
-          "a.createdAt",
-          "a.updatedAt",
-          "a.coverImageUrl"
+        "a.id",
+        "a.title",
+        "a.body",
+        "f.followingId as authorId",
+        "au.fullname as author",
+        "a.createdAt",
+        "a.updatedAt",
+        "a.coverImageUrl"
       )
       .join("users as u", "u.id", "f.followerId")
       .join("articles as a", "a.authorId", "f.followingId")
       .join("users as au", "au.id", "a.authorId")
       .where("f.followerId", id)
       .andWhere("a.isPublished", "true");
-      
-      for (let i = 0; i < articles.length; i++) {
-        await getTagsByArticleId(articles[i].id).then(res => {
-          response.push({ ...articles[i], tags: res });
-        });
-      }
+
+    for (let i = 0; i < articles.length; i++) {
+      await getTagsByArticleId(articles[i].id).then(res => {
+        response.push({ ...articles[i], tags: res });
+      });
+    }
 
     return response;
   } catch (error) {
@@ -85,11 +107,11 @@ async function getArticlesByUserInterests(id) {
       .andWhere("a.isPublished", "true")
       .distinct();
 
-      for (let i = 0; i < articles.length; i++) {
-        await getTagsByArticleId(articles[i].id).then(res => {
-          response.push({ ...articles[i], tags: res });
-        });
-      }
+    for (let i = 0; i < articles.length; i++) {
+      await getTagsByArticleId(articles[i].id).then(res => {
+        response.push({ ...articles[i], tags: res });
+      });
+    }
 
     return response;
   } catch (error) {
@@ -99,7 +121,7 @@ async function getArticlesByUserInterests(id) {
 
 async function getGeneralFeed() {
   try {
-      let response = [];
+    let response = [];
 
     let articles = await db("articles as a")
       .select(
@@ -114,12 +136,12 @@ async function getGeneralFeed() {
       )
       .join("users as u", "u.id", "a.authorId")
       .where("a.isPublished", "true");
-      
-      for (let i = 0; i < articles.length; i++) {
-        await getTagsByArticleId(articles[i].id).then(res => {
-          response.push({ ...articles[i], tags: res });
-        });
-      }
+
+    for (let i = 0; i < articles.length; i++) {
+      await getTagsByArticleId(articles[i].id).then(res => {
+        response.push({ ...articles[i], tags: res });
+      });
+    }
 
     return response;
   } catch (error) {
@@ -138,8 +160,6 @@ async function getTagsByArticleId(id) {
     console.log(error);
   }
 }
-
-
 
 async function addArticle(article) {
   try {
@@ -192,7 +212,7 @@ async function findTagById(id) {
     console.log(error);
   }
 }
-  
+
 async function getArticlesById(id) {
   try {
     const article = await db("articles")
@@ -216,6 +236,8 @@ async function getArticlesById(id) {
 }
 
 module.exports = {
+  addArticleLike,
+  getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
   getGeneralFeed,
