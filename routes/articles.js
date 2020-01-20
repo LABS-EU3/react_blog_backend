@@ -28,7 +28,7 @@ router.post("/uploadCover", async (req, res) => {
     const result = await service.uploadFile(files);
     const coverToAdd = { url: result, articleId: files.articleId };
     try {
-      const response = await service.addCover(coverToAdd);
+      const response = await service.addNewCover(coverToAdd);
       const { id } = response;
       return res.status(200).json(id);
     } catch (error) {
@@ -68,33 +68,14 @@ router.post("/fetchUrl", (req, res) => {
 
 router.post("/publish", async (req, res) => {
   const article = req.body;
-  console.log("ddddd", article);
   const tagsToAdd = article.tags;
-  const articleToAdd = _.omit(article, ["tags", "coverFile"]);
-  async function generateURL() {
-    try {
-      let form = new formidable.IncomingForm();
-      form.parse(req, async function(err, fields, files) {
-        console.log("files", files);
-        if (err) {
-          console.error(err.message);
-          return;
-        }
-
-        const result = await service.uploadFile(files);
-        console.log("trsult", result);
-        return result;
-      });
-    } catch (error) {
-      console.log(error);
-      return "";
-    }
-  }
-  let coverImageURL = generateURL();
-  console.log(coverImageURL);
+  const articleToAdd = _.omit(article, "tags");
   const responseTags = [];
   try {
-    const response = await service.addNewArticle(articleToAdd);
+    const response = await service.addNewArticle({
+      ...articleToAdd,
+      coverImageUrl: ""
+    });
     const { id } = response;
     for (const tag of tagsToAdd) {
       const savedTag = await service.addTag(tag, id);
