@@ -22,6 +22,7 @@ exports.up = function(knex) {
       .defaultTo(knex.fn.now());
     table.boolean("isEditing").notNullable();
     table.boolean("isPublished").notNullable();
+    table.string("coverImageUrl");
   });
 };
 

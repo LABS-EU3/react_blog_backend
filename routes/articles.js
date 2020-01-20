@@ -1,13 +1,16 @@
 const express = require("express");
 const service = require("../services/articles");
+const loggedIn = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
+router.get("/", loggedIn, async (req, res, next) => {
   try {
-    const articles = await service.findArticles();
+    const articles = await service.findArticles(
+      req.decodedToken ? req.decodedToken.subject : null
+    );
     res.status(articles.statusCode).json(articles.data);
   } catch (error) {
     next(error);

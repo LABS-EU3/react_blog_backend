@@ -3,21 +3,49 @@ const fs = require("fs");
 const articles = require("../data/models/article-model");
 const config = require("../config");
 
-articles.addArticle;
-
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
   secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
   region: config.AWS_REGION
 });
 
-async function findArticles() {
-  const allArticles = await articles.getArticles();
+async function findArticles(userId) {
+  let feed;
 
-  if (!allArticles) {
+  try {
+    let trending = await articles.getTrendingArticles();
+    let mainFeed = await articles.getGeneralFeed();
+
+    if (userId) {
+      let interests = await articles.getArticlesByUserInterests(userId);
+      let following = await articles.getFollowingArticles(userId);
+
+      if (!interests.length) {
+        if (!following.length) {
+          feed = { trending, mainFeed };
+        } else {
+          feed = { trending, mainFeed, following };
+        }
+      } else if (!following.length) {
+        if (!interests.length) {
+          feed = { trending, mainFeed };
+        } else {
+          feed = { trending, interests };
+        }
+      } else {
+        feed = { trending, interests, following };
+      }
+    } else {
+      feed = { trending, mainFeed };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  if (!feed) {
     return { statusCode: 404, data: { message: "Articles not found." } };
   } else {
-    return { statusCode: 200, data: { data: allArticles } };
+    return { statusCode: 200, data: feed };
   }
 }
 
