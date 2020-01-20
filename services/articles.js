@@ -84,9 +84,32 @@ async function uploadFile(image) {
   }
 }
 
+async function getArticleInfo(articleId) {
+  try {
+    const article = await articles.getArticlesById(articleId);
+    const tags = await articles.getArticleTags(articleId);
+    const response = { ...article, tags };
+    // const body = article.body;
+    // const mystring = body.replace(/\\/g, "");
+    // console.log(JSON.parse(JSON.parse(response)));
+    // const legit = JSON.parse(mystring);
+    if (!article) {
+      return {
+        statusCode: 404,
+        data: { message: `Cannot find article id of ${articleId}. ` }
+      };
+    } else {
+      return { statusCode: 200, data: { response } };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   findArticles,
   addNewArticle,
   addTag,
-  uploadFile
+  uploadFile,
+  getArticleInfo
 };

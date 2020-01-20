@@ -1,9 +1,10 @@
 const express = require("express");
 const service = require("../services/articles");
 const loggedIn = require("./utils/loggedIn");
-const router = express.Router();
-const formidable = require("formidable");
 const _ = require("lodash");
+const formidable = require("formidable");
+
+const router = express.Router();
 
 router.get("/", loggedIn, async (req, res, next) => {
   try {
@@ -72,6 +73,16 @@ router.post("/save", async (req, res) => {
     res.status(500).json({
       error: error.message
     });
+  }
+});
+
+router.get("/:articleId", async (req, res, next) => {
+  try {
+    const { articleId } = req.params;
+    const result = await service.getArticleInfo(articleId);
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    next(err);
   }
 });
 
