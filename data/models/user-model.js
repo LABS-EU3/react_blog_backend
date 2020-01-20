@@ -11,6 +11,16 @@ async function addNewUser(user) {
   }
 }
 
+async function editUser(userData, id) {
+  try {
+    const user = await db("users")
+      .where({ id: id})
+      .update(userData)
+      return user;    
+  } catch(error) {
+    console.log(error);
+  }
+}
 async function findUsers() {
   try {
     const users = await db("users").select("id", "fullname", "email", "avatarUrl");
@@ -56,4 +66,5 @@ async function getBy(filter) {
     console.log(err)
   }
 }
-module.exports = { addNewUser, verifyUser, findUserById, findUsers, getBy };
+
+module.exports = { addNewUser, editUser, verifyUser, findUserById, findUsers, getBy };
