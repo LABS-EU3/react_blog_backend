@@ -159,7 +159,54 @@ describe("GET /api/articles", () => {
 describe("POST /articles/like/:id endpoint", () => {
   test("Should return 404 if no user id or article id present", async () => {
     const response = await request(server).post(`/api/articles/like/${1}`);
-
     expect(response.status).toBe(404);
+  });
+  test("Should return message asking user to log in to like article if no user id present", async () => {
+    const mockUserData = {
+      fullname: "Test user",
+      email: "testuser@gmail.com",
+      password: "1234"
+    };
+    const mockAuthorData = {
+      fullname: "Test author",
+      email: "testauthor@gmail.com",
+      password: "1234"
+    };
+
+    const registerUserResponse = await request(server)
+      .post("/api/auth/register")
+      .send(mockUserData);
+    const registerAuthorResponse = await request(server)
+      .post("/api/auth/register")
+      .send(mockAuthorData);
+    const authorId = registerAuthorResponse.body.response.id;
+
+    const mockArticle = {
+      id: 1,
+      custom_id: 12,
+      title: "Test 2",
+      authorId: authorId,
+      body: [
+        {
+          type: "paragraph",
+          data: {
+            text:
+              "Hey. Meet the new Editor. On this page you can see it in action — try to edit this text."
+          }
+        }
+      ],
+      isEditing: false,
+      isPublished: true
+    };
+    await db("articles").insert(mockArticle);
+
+    const likeArticleResponse = await request(server).post(
+      `/api/articles/like/${mockArticle.id}`
+    );
+
+    expect(likeArticleResponse.status).toBe(404);
+    expect(likeArticleResponse.text).toEqual(
+      '{"message":"Must be logged in to like article."}'
+    );
   });
 });
