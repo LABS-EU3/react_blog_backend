@@ -70,7 +70,6 @@ async function uploadFile(image) {
     };
 
 
-    const url = new Promise((resolve) => {
     const url = new Promise(resolve => {
       s3.upload(params, function(err, data) {
         if (err) {

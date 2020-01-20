@@ -29,20 +29,7 @@ async function editUserInfo(userInfo, userId) {
 
     if(!user) {
       return { statusCode: 404, data: { message: "User does not exist" } };
-    } else {
-
-      const { password, fullname, email } = userInfo;
-      if (password) {
-        const hash = bcrypt.hashSync(password, 10);
-        userInfo.password = hash;
-        console.log(userInfo.password);
-        console.log(password);
-
-        return hash;
-      } else if(fullname || email) {
-        console.log(fullname, email)
-          return { fullname, email }
-      }
+    } else {      
       return { 
         statusCode: 200, 
         data: { 
