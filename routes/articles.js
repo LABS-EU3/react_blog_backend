@@ -81,11 +81,11 @@ router.post("/publish", async (req, res) => {
       result = await service.uploadFile(files.image);
     }
 
-    console.log(fields);
     const article = fields;
-    console.log("article", article)
-    const tagsToAdd = article.tags;
-    const articleToAdd = _.omit(article, "tags");
+    const tagsToAdd = JSON.parse(article.tags);
+    const articleToAdd = _.omit(article, ["tags", "image"]);
+    articleToAdd.body = JSON.parse(articleToAdd.body);
+    articleToAdd.coverImageUrl = "";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
@@ -93,7 +93,7 @@ router.post("/publish", async (req, res) => {
     try {
       const response = await service.addNewArticle(articleToAdd);
       const { id } = response;
-      for (const tag of tagsToAdd) {
+      for (const tag of [...tagsToAdd]) {
         const savedTag = await service.addTag(tag, id);
         responseTags.push(savedTag);
       }
