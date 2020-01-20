@@ -23,7 +23,7 @@ async function editUser(userData, id) {
 }
 async function findUsers() {
   try {
-    const users = await db("users").select("id", "fullname", "email", "avatarUrl");
+    const users = await db("users").select("id", "fullname", "email", "avatarUrl", "password");
     return users;
   } catch (error) {
     console.log(error);
