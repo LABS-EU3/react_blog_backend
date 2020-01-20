@@ -174,7 +174,7 @@ async function findArticleCover(articleId) {
   try {
     const url = await db("covers")
       .select("url")
-      .where({ articleId: articleId })
+      .where({ custom_id: articleId })
       .first();
     if (url) return url;
     else return;
