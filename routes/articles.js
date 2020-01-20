@@ -27,7 +27,7 @@ router.post("/uploadCover", async (req, res) => {
     }
     const result = await service.uploadFile(files.image);
     const coverToAdd = { url: result, articleId: fields.articleId };
-    console.log(coverToAdd)
+    console.log(coverToAdd);
     try {
       const response = await service.addNewCover(coverToAdd);
       const { id } = response;
@@ -68,27 +68,43 @@ router.post("/fetchUrl", (req, res) => {
 });
 
 router.post("/publish", async (req, res) => {
-  const article = req.body;
-  const tagsToAdd = article.tags;
-  const articleToAdd = _.omit(article, "tags");
-  const responseTags = [];
-  try {
-    const response = await service.addNewArticle({
-      ...articleToAdd,
-      coverImageUrl: ""
-    });
-    const { id } = response;
-    for (const tag of tagsToAdd) {
-      const savedTag = await service.addTag(tag, id);
-      responseTags.push(savedTag);
+  let form = new formidable.IncomingForm();
+  form.parse(req, async function(err, fields, files) {
+    // eslint-disable-next-line no-unused-vars
+    let result = "";
+    console.log(fields);
+    if (err) {
+      console.error(err.message);
+      return;
     }
-    console.log(responseTags);
-    return res.status(200).json({ ...response, tags: responseTags });
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
-  }
+    if (files.image) {
+      result = await service.uploadFile(files.image);
+    }
+
+    console.log(fields);
+    const article = fields;
+    console.log("article", article)
+    const tagsToAdd = article.tags;
+    const articleToAdd = _.omit(article, "tags");
+    const responseTags = [];
+    if (result) {
+      articleToAdd.coverImageUrl = result;
+    }
+    try {
+      const response = await service.addNewArticle(articleToAdd);
+      const { id } = response;
+      for (const tag of tagsToAdd) {
+        const savedTag = await service.addTag(tag, id);
+        responseTags.push(savedTag);
+      }
+      console.log(responseTags);
+      return res.status(200).json({ ...response, tags: responseTags });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
+  });
 });
 
 router.post("/save", async (req, res) => {
@@ -96,7 +112,7 @@ router.post("/save", async (req, res) => {
   try {
     const articleToAdd = _.omit(article, "tags");
     const response = await service.addNewArticle(articleToAdd);
-    console.log(response)
+    console.log(response);
     return res.status(200).json(response);
   } catch (error) {
     res.status(500).json({
