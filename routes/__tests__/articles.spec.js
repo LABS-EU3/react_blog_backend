@@ -29,3 +29,10 @@ describe("server", () => {
       });
     });
   });
+
+// describe("GET /api/articleId", () => {
+//     test("should return status 404 for article id does not exist", async () => {
+//         const response = await request(server).get("/api/articleId/");
+//         expect(response.status).toBe(404);
+//       });
+// })

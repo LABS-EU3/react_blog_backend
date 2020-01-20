@@ -12,6 +12,8 @@ async function getArticles() {
   }
 }
 
+
+
 async function addArticle(article) {
   try {
     const [id] = await db("articles").insert(article, "id");
@@ -44,6 +46,15 @@ async function addTag(tag) {
   }
 }
 
+async function getArticleTags(articleId) {
+  try {
+    const tags = await db("tags").where({ articleId: articleId });
+    return tags;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findTagById(id) {
   try {
     const tag = await db("tags")
@@ -55,4 +66,32 @@ async function findTagById(id) {
   }
 }
 
-module.exports = { getArticles, addArticle, addTag };
+async function getArticlesById(id) {
+  try {
+    const article = await db("articles")
+      .select(
+        "articles.id",
+        "title",
+        "body",
+        "authorId",
+        "createdAt",
+        "updatedAt"
+      )
+      .where({ id: id })
+      .first();
+    const [{ fullname }] = await db("users")
+      .select("fullname")
+      .where({ id: article.authorId });
+    return { ...article, authorName: fullname };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = {
+  getArticles,
+  addArticle,
+  getArticleTags,
+  addTag,
+  getArticlesById
+};

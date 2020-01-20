@@ -1,7 +1,7 @@
 const express = require("express");
 const service = require("../services/articles");
 const _ = require("lodash");
-const formidable = require('formidable')
+const formidable = require("formidable");
 
 const router = express.Router();
 
@@ -15,7 +15,6 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/uploadFile", async (req, res) => {
-  
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
     if (err) {
@@ -24,23 +23,21 @@ router.post("/uploadFile", async (req, res) => {
     }
 
     const result = await service.uploadFile(files.image);
-    
+
     const response = {
-      "success" : 1,
-      "file": {
-          "url" : result,
-          // ... and any additional fields you want to store, such as width, height, color, extension, etc
+      success: 1,
+      file: {
+        url: result
+        // ... and any additional fields you want to store, such as width, height, color, extension, etc
       }
-    }
+    };
     res.status(200).json(response);
   });
-  
-  
 });
 
-router.post('/fetchUrl', (req, res) => {
-  console.log(req)
-})
+router.post("/fetchUrl", (req, res) => {
+  console.log(req);
+});
 
 router.post("/publish", async (req, res) => {
   const article = req.body;
@@ -73,6 +70,16 @@ router.post("/save", async (req, res) => {
     res.status(500).json({
       error: error.message
     });
+  }
+});
+
+router.get("/:articleId", async (req, res, next) => {
+  try {
+    const { articleId } = req.params;
+    const result = await service.getArticleInfo(articleId);
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    next(err);
   }
 });
 
