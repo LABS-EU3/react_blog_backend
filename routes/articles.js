@@ -27,6 +27,7 @@ router.post("/uploadCover", async (req, res) => {
     }
     const result = await service.uploadFile(files.image);
     const coverToAdd = { url: result, articleId: fields.articleId };
+    console.log(coverToAdd)
     try {
       const response = await service.addNewCover(coverToAdd);
       const { id } = response;
