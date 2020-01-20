@@ -155,3 +155,11 @@ describe("GET /api/articles", () => {
   //   done();
   // });
 });
+
+describe("POST /articles/like/:id endpoint", () => {
+  test("Should return 404 if no user id or article id present", async () => {
+    const response = await request(server).post(`/api/articles/like/${1}`);
+
+    expect(response.status).toBe(404);
+  });
+});
