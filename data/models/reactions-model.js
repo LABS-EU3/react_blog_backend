@@ -14,7 +14,15 @@ async function addReactions(reaction) {
 async function getReactions() {
     try {
         const reactions = await db("reactions as r")
-            .select('r.id', 'highlighted_text', 'emoji', 'userId', 'r.authorId', 'r.title', 'articleId')
+            .select(
+                'r.id', 
+                'highlighted_text', 
+                'emoji', 
+                'userId', 
+                'r.authorId', 
+                'r.title', 
+                'articleId'
+            )
             .join('articles as a', 'a.id', 'r.articleId')
             .join('users as u', 'u.id', 'r.userId')
             .where('userId','=', 'u.id')    
