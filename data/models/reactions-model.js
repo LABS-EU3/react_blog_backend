@@ -21,7 +21,8 @@ async function getReactions() {
                 'userId', 
                 'r.authorId', 
                 'r.title', 
-                'articleId'
+                'articleId',
+                'r.avatarUrl'
             )
             .join('articles as a', 'a.id', 'r.articleId')
             .join('users as u', 'u.id', 'r.userId')
