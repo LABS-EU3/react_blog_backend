@@ -72,7 +72,6 @@ router.post("/publish", async (req, res) => {
   form.parse(req, async function(err, fields, files) {
     // eslint-disable-next-line no-unused-vars
     let result = "";
-    console.log(fields);
     if (err) {
       console.error(err.message);
       return;
@@ -81,23 +80,26 @@ router.post("/publish", async (req, res) => {
       result = await service.uploadFile(files.image);
     }
 
-    const article = fields;
+    const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
-    const articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.body = JSON.parse(articleToAdd.body);
+    let articleToAdd = _.omit(article, ["tags", "image"]);
     articleToAdd.coverImageUrl = "";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
     }
     try {
+      console.log("kjj", articleToAdd);
       const response = await service.addNewArticle(articleToAdd);
       const { id } = response;
-      for (const tag of [...tagsToAdd]) {
-        const savedTag = await service.addTag(tag, id);
+      for (const tag of tagsToAdd) {
+        const savedTag = await service.addTag(tag["name"], id);
         responseTags.push(savedTag);
       }
-      console.log(responseTags);
+      console.log("response", {
+        ...response,
+        tags: responseTags,
+      });
       return res.status(200).json({ ...response, tags: responseTags });
     } catch (error) {
       res.status(500).json({
