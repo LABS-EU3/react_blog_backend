@@ -6,7 +6,6 @@ exports.seed = function(knex) {
       // Inserts seed entries
       return knex("articles").insert([
         {
-          id: 1,
           coverImageUrl:
             "https://images.unsplash.com/photo-1440985465094-6ac443aab454?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
           custom_id: 12,
@@ -20,7 +19,6 @@ exports.seed = function(knex) {
           isPublished: true
         },
         {
-          id: 2,
           coverImageUrl:
             "https://images.unsplash.com/photo-1506645292803-579c17d4ba6a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
           custom_id: 12,
@@ -34,7 +32,6 @@ exports.seed = function(knex) {
           isPublished: true
         },
         {
-          id: 3,
           custom_id: 12,
           coverImageUrl:
             "https://images.unsplash.com/photo-1490971588422-52f6262a237a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
@@ -48,7 +45,6 @@ exports.seed = function(knex) {
           isPublished: true
         },
         {
-          id: 6,
           coverImageUrl:
             "https://images.unsplash.com/photo-1486649961855-75838619c131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
           custom_id: 12,
@@ -62,7 +58,6 @@ exports.seed = function(knex) {
           isPublished: true
         },
         {
-          id: 5,
           coverImageUrl:
             "https://images.unsplash.com/photo-1565120130276-dfbd9a7a3ad7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
           custom_id: 12,
@@ -76,7 +71,6 @@ exports.seed = function(knex) {
           isPublished: true
         },
         {
-          id: 4,
           custom_id: 12,
           coverImageUrl: "https://www.irishtimes.com/polopoly_fs/1.4135082.1579124216!/image/image.jpg_gen/derivatives/box_220/image.jpg",
           title: "Make reclaiming your online privacy a priority in 2020.",
@@ -89,7 +83,6 @@ exports.seed = function(knex) {
           isPublished: true
         },
         {
-          id: 7,
           custom_id: 12,
           title: "Test 7",
           authorId: 1,
