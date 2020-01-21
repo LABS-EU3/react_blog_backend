@@ -170,25 +170,24 @@ async function findCoverById(id) {
   }
 }
 
-async function findArticleCover(articleId) {
-  try {
-    const [{ url }] = await db("covers")
-      .select("url")
-      .where({ articleId: articleId });
-    if (url) return url;
-    else return;
-  } catch (error) {
-    console.log(error);
-  }
-}
+// async function findArticleCover(articleId) {
+//   try {
+//     const [{ url }] = await db("covers").where({ articleId: articleId });
+//     return url;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 async function findArticleById(id) {
   try {
     const article = await db("articles")
       .where({ id: id })
       .first();
-    const articleCover = await findArticleCover(article.custom_id);
-    return { ...article, coverImageUrl: articleCover ? articleCover : "" };
+    return {
+      ...article,
+      coverImageUrl: article.coverImageUrl.length ? article.coverImageUrl : ""
+    };
   } catch (error) {
     console.log(error);
   }
