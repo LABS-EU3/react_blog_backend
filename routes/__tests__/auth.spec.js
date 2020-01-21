@@ -45,16 +45,16 @@ describe("POST /api/auth/register", () => {
   // });
 });
 
-describe("POST /api/auth/login", () => {
-  test("should return an HTTP status code of 200 if user logs in successflly", async () => {
-    const loginMockData = {
-      email: "testuser999@gmail.com",
-      password: "password"
-    };
+// describe("POST /api/auth/login", () => {
+//   test("should return an HTTP status code of 200 if user logs in successflly", async () => {
+//     const loginMockData = {
+//       email: "testuser999@gmail.com",
+//       password: "password"
+//     };
 
-    const response = await request(server)
-    .post("/api/auth/login")
-    .send(loginMockData)
-    expect(response.status).toBe(200);
-  });
-})
+//     const response = await request(server)
+//     .post("/api/auth/login")
+//     .send(loginMockData)
+//     expect(response.status).toBe(200);
+//   });
+// })
