@@ -17,28 +17,28 @@ router.get("/", loggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/uploadCover", async (req, res) => {
-  let form = new formidable.IncomingForm();
-  form.parse(req, async function(err, fields, files) {
-    console.log("files", fields);
-    if (err) {
-      console.error(err.message);
-      return;
-    }
-    const result = await service.uploadFile(files.image);
-    const coverToAdd = { url: result, articleId: fields.articleId };
-    console.log(coverToAdd);
-    try {
-      const response = await service.addNewCover(coverToAdd);
-      const { id } = response;
-      return res.status(200).json(id);
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  });
-});
+// router.post("/uploadCover", async (req, res) => {
+//   let form = new formidable.IncomingForm();
+//   form.parse(req, async function(err, fields, files) {
+//     console.log("files", fields);
+//     if (err) {
+//       console.error(err.message);
+//       return;
+//     }
+//     const result = await service.uploadFile(files.image);
+//     const coverToAdd = { url: result, articleId: fields.articleId };
+//     console.log(coverToAdd);
+//     try {
+//       const response = await service.addNewCover(coverToAdd);
+//       const { id } = response;
+//       return res.status(200).json(id);
+//     } catch (error) {
+//       res.status(500).json({
+//         error: error.message
+//       });
+//     }
+//   });
+// });
 
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
@@ -89,7 +89,6 @@ router.post("/publish", async (req, res) => {
       articleToAdd.coverImageUrl = result;
     }
     try {
-      console.log("kjj", articleToAdd);
       const response = await service.addNewArticle(articleToAdd);
       const { id } = response;
       for (const tag of tagsToAdd) {
@@ -98,7 +97,7 @@ router.post("/publish", async (req, res) => {
       }
       console.log("response", {
         ...response,
-        tags: responseTags,
+        tags: responseTags
       });
       return res.status(200).json({ ...response, tags: responseTags });
     } catch (error) {
