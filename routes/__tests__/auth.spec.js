@@ -55,25 +55,6 @@ describe("POST /api/auth/login", () => {
     const response = await request(server)
     .post("/api/auth/login")
     .send(loginMockData)
-
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty("email", loginMockData.email);
-    expect(response.body).toHaveProperty("token");
   });
-
-  test("should return an HTTP status code of 400 if any of the fields are missing", async () => {
-    const wrongLoginMockData = {
-      email: "",
-      password: "password"
-    };
-
-    const response = await request(server)
-      .post("/api/auth/login")
-      .send(wrongLoginMockData);
-
-      // expect(response.status).toBe(400);
-      expect(response.body).toBeInstanceOf(Object);
-
-  })
 })
