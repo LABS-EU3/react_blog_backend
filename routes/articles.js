@@ -67,9 +67,11 @@ router.post("/fetchUrl", (req, res) => {
 });
 
 router.post("/publish", async (req, res) => {
+  console.log(req.body)
   const article = req.body;
   const tagsToAdd = article.tags;
   const articleToAdd = _.omit(article, "tags");
+  articleToAdd.body = JSON.stringify(articleToAdd.body);
   const responseTags = [];
   try {
     const response = await service.addNewArticle({
