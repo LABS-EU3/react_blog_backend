@@ -83,7 +83,6 @@ router.post("/publish", async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.body = JSON.stringify(articleToAdd.body);
     articleToAdd.coverImageUrl = "";
     const responseTags = [];
     if (result) {
