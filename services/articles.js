@@ -54,6 +54,11 @@ async function addNewArticle(article) {
   return response;
 }
 
+async function addNewCover(cover) {
+  const response = await articles.addCover(cover);
+  return response;
+}
+
 async function addTag(tag, id) {
   const response = await articles.addTag({ name: tag, articleId: id });
   return response;
@@ -84,9 +89,33 @@ async function uploadFile(image) {
   }
 }
 
+async function getArticleInfo(articleId) {
+  try {
+    const article = await articles.getArticlesById(articleId);
+    const tags = await articles.getArticleTags(articleId);
+    const response = { ...article, tags };
+    // const body = article.body;
+    // const mystring = body.replace(/\\/g, "");
+    // console.log(JSON.parse(JSON.parse(response)));
+    // const legit = JSON.parse(mystring);
+    if (!article) {
+      return {
+        statusCode: 404,
+        data: { message: `Cannot find article id of ${articleId}. ` }
+      };
+    } else {
+      return { statusCode: 200, data: { response } };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   findArticles,
   addNewArticle,
   addTag,
-  uploadFile
+  uploadFile,
+  getArticleInfo,
+  addNewCover
 };
