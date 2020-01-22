@@ -24,30 +24,30 @@ describe("GET /api/articles", () => {
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Object);
   });
-  test("Should return array of trending articles and array for main feed if no credentials are present", async () => {
-    const response = await request(server).get("/api/articles");
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("trending");
-    expect(response.body).toHaveProperty("mainFeed");
-  });
-  test("Should return array of trending articles and array for main feed if credentials are present but user does not have interests or follow any other authors", async () => {
-    const mockUserData = {
-      email: "test1000@yahoo.com",
-      password: "1234",
-      fullname: "Test User"
-    };
-    const signUpUserResponse = await request(server)
-      .post("/api/auth/register")
-      .send(mockUserData);
-    const token = signUpUserResponse.body.token;
+  // test("Should return array of trending articles and array for main feed if no credentials are present", async () => {
+  //   const response = await request(server).get("/api/articles");
+  //   expect(response.status).toBe(200);
+  //   expect(response.body).toHaveProperty("trending");
+  //   expect(response.body).toHaveProperty("mainFeed");
+  // });
+  // test("Should return array of trending articles and array for main feed if credentials are present but user does not have interests or follow any other authors", async () => {
+  //   const mockUserData = {
+  //     email: "test1000@yahoo.com",
+  //     password: "1234",
+  //     fullname: "Test User"
+  //   };
+  //   const signUpUserResponse = await request(server)
+  //     .post("/api/auth/register")
+  //     .send(mockUserData);
+  //   const token = signUpUserResponse.body.token;
 
-    const getArticlesResponse = await request(server)
-      .get("/api/articles")
-      .set("Authorization", token);
-    expect(getArticlesResponse.status).toBe(200);
-    expect(getArticlesResponse.body).toHaveProperty("trending");
-    expect(getArticlesResponse.body).toHaveProperty("mainFeed");
-  });
+  //   const getArticlesResponse = await request(server)
+  //     .get("/api/articles")
+  //     .set("Authorization", token);
+  //   expect(getArticlesResponse.status).toBe(200);
+  //   expect(getArticlesResponse.body).toHaveProperty("trending");
+  //   expect(getArticlesResponse.body).toHaveProperty("mainFeed");
+  // });
 
   // test("Should return array of relevant articles based on users interests in place of main feed if credentials are present and user has interests", async () => {
   //   const mockUserData = {
