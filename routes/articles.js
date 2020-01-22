@@ -43,15 +43,12 @@ router.get("/", loggedIn, async (req, res, next) => {
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
-    console.log(files);
     if (err) {
       console.error(err.message);
       return;
     }
 
-    const result = await service.uploadFile(files);
-    console.log(files);
-
+    const result = await service.uploadFile(files.image);
     const response = {
       success: 1,
       file: {
@@ -83,7 +80,7 @@ router.post("/publish", async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.coverImageUrl = "";
+    articleToAdd.coverImageUrl = "https://getinsightly.s3.us-west-2.amazonaws.com/dummy-post-square-1-thegem-blog-slider-fullwidth.jpg";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
