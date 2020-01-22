@@ -171,12 +171,45 @@ async function addArticle(article) {
   }
 }
 
+async function addCover(cover) {
+  try {
+    const [id] = await db("covers").insert(cover, "id");
+    const response = await findCoverById(id);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function findCoverById(id) {
+  try {
+    const cover = await db("covers")
+      .where({ id: id })
+      .first();
+    return cover;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// async function findArticleCover(articleId) {
+//   try {
+//     const [{ url }] = await db("covers").where({ articleId: articleId });
+//     return url;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
 async function findArticleById(id) {
   try {
     const article = await db("articles")
       .where({ id: id })
       .first();
-    return article;
+    return {
+      ...article,
+      coverImageUrl: article.coverImageUrl.length ? article.coverImageUrl : ""
+    };
   } catch (error) {
     console.log(error);
   }
@@ -245,5 +278,6 @@ module.exports = {
   addArticle,
   addTag,
   getArticleTags,
-  getArticlesById
+  getArticlesById,
+  addCover
 };
