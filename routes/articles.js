@@ -1,12 +1,12 @@
 const express = require("express");
 const service = require("../services/articles");
-const loggedIn = require("./utils/loggedIn");
+const {authenticate} = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
 const router = express.Router();
 
-router.get("/", loggedIn, async (req, res, next) => {
+router.get("/", authenticate, async (req, res, next) => {
   try {
     const articles = await service.findArticles(
       req.decodedToken ? req.decodedToken.subject : null
@@ -64,7 +64,7 @@ router.post("/fetchUrl", (req, res) => {
   console.log(req, res);
 });
 
-router.post("/publish", async (req, res) => {
+router.post("/publish", authenticate, async (req, res) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
     // eslint-disable-next-line no-unused-vars
@@ -105,7 +105,7 @@ router.post("/publish", async (req, res) => {
   });
 });
 
-router.post("/save", async (req, res) => {
+router.post("/save", authenticate, async (req, res) => {
   const article = req.body;
   try {
     const articleToAdd = _.omit(article, "tags");
