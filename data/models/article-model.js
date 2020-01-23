@@ -1,11 +1,34 @@
 const db = require("../dbConfig");
 
+async function addArticleLike(articleLike) {
+  try {
+    const ids = await db("articleLikes as al").insert(articleLike, "id");
+    const id = ids[0];
+    return id;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getLikeCountByArticleId(id) {
+  try {
+    let response = await db("articleLikes")
+      .count()
+      .where("articleId", id)
+      .first();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getFollowingArticles(id) {
   try {
     let response = [];
     let articles = await db("follows as f")
       .select(
         "a.id",
+        "a.custom_id",
         "a.title",
         "a.body",
         "f.followingId as authorId",
@@ -39,6 +62,7 @@ async function getTrendingArticles() {
     let articles = await db("articles as a")
       .select(
         "a.id",
+        "a.custom_id",
         "title",
         "body",
         "authorId",
@@ -70,6 +94,7 @@ async function getArticlesByUserInterests(id) {
     let articles = await db("articles as a")
       .select(
         "a.id",
+        "a.custom_id",
         "a.title",
         "a.body",
         "au.id as authorId",
@@ -104,6 +129,7 @@ async function getGeneralFeed() {
     let articles = await db("articles as a")
       .select(
         "a.id",
+        "a.custom_id",
         "title",
         "body",
         "authorId",
@@ -229,13 +255,15 @@ async function getArticlesById(id) {
     const article = await db("articles")
       .select(
         "articles.id",
+        "articles.custom_id",
+        "articles.coverImageUrl",
         "title",
         "body",
         "authorId",
         "createdAt",
         "updatedAt"
       )
-      .where({ id: id })
+      .where({ custom_id: id })
       .first();
     const [{ fullname }] = await db("users")
       .select("fullname")
@@ -247,6 +275,8 @@ async function getArticlesById(id) {
 }
 
 module.exports = {
+  addArticleLike,
+  getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
   getGeneralFeed,
