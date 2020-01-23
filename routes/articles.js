@@ -6,6 +6,31 @@ const formidable = require("formidable");
 
 const router = express.Router();
 
+router.post("/like/:id", loggedIn, async (req, res, next) => {
+  const articleId = req.params.id;
+  const userId = req.decodedToken ? req.decodedToken.subject : null;
+  try {
+    if (!userId) {
+      return res
+        .status(404)
+        .json({ message: "Must be logged in to like article." });
+    }
+    await service.likeArticle(articleId, userId);
+    const likeCount = await service.getArticleLikeCount(articleId);
+    res
+      .status(200)
+      .json({
+        message: "Successfully liked article",
+        userId,
+        articleId,
+        newLikeCount: likeCount.count
+      });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
 router.get("/", loggedIn, async (req, res, next) => {
   try {
     const articles = await service.findArticles(
