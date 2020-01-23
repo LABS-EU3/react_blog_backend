@@ -103,12 +103,8 @@ async function uploadFile(image) {
 async function getArticleInfo(articleId) {
   try {
     const article = await articles.getArticlesById(articleId);
-    const tags = await articles.getArticleTags(articleId);
+    const tags = await articles.getArticleTags(article.id);
     const response = { ...article, tags };
-    // const body = article.body;
-    // const mystring = body.replace(/\\/g, "");
-    // console.log(JSON.parse(JSON.parse(response)));
-    // const legit = JSON.parse(mystring);
     if (!article) {
       return {
         statusCode: 404,

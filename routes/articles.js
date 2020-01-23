@@ -1,14 +1,14 @@
 const express = require("express");
 const service = require("../services/articles");
-const loggedIn = require("./utils/loggedIn");
+const {authenticate} = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
 const router = express.Router();
 
-router.post("/like/:id", loggedIn, async (req, res, next) => {
+router.post("/like/:id", authenticate, async (req, res, next) => {
   const articleId = req.params.id;
-  const userId = req.decodedToken ? req.decodedToken.subject : null;
+  const userId = req.user ? req.user.subject : null;
   try {
     if (!userId) {
       return res
@@ -31,10 +31,10 @@ router.post("/like/:id", loggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/", loggedIn, async (req, res, next) => {
+router.get("/", authenticate, async (req, res, next) => {
   try {
     const articles = await service.findArticles(
-      req.decodedToken ? req.decodedToken.subject : null
+      req.user ? req.user.subject : null
     );
     res.status(articles.statusCode).json(articles.data);
   } catch (error) {
@@ -68,15 +68,12 @@ router.get("/", loggedIn, async (req, res, next) => {
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
-    console.log(files);
     if (err) {
       console.error(err.message);
       return;
     }
 
-    const result = await service.uploadFile(files);
-    console.log(files);
-
+    const result = await service.uploadFile(files.image);
     const response = {
       success: 1,
       file: {
@@ -92,7 +89,7 @@ router.post("/fetchUrl", (req, res) => {
   console.log(req, res);
 });
 
-router.post("/publish", async (req, res) => {
+router.post("/publish", authenticate, async (req, res) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
     // eslint-disable-next-line no-unused-vars
@@ -108,7 +105,7 @@ router.post("/publish", async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.coverImageUrl = "";
+    articleToAdd.coverImageUrl = "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
@@ -133,7 +130,7 @@ router.post("/publish", async (req, res) => {
   });
 });
 
-router.post("/save", async (req, res) => {
+router.post("/save", authenticate, async (req, res) => {
   const article = req.body;
   try {
     const articleToAdd = _.omit(article, "tags");
@@ -149,6 +146,7 @@ router.post("/save", async (req, res) => {
 
 router.get("/:articleId", async (req, res, next) => {
   try {
+    // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const { articleId } = req.params;
     const result = await service.getArticleInfo(articleId);
     res.status(result.statusCode).json(result.data);

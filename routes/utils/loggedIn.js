@@ -1,15 +1,27 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../../config')
 
-module.exports = (req, res, next) => {
-  const token = req.headers.authorization;
+function authenticate(req, res, next) {
+  const token = req.headers['authorization'] || 'trapped';
 
   if (token) {
-    jwt.verify(token, process.env.SECRET, (err, decodedToken) => {
-      req.decodedToken = decodedToken;
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+      if (err)
+        return res.status(401).json({
+          message: 'User not authenticated',
+        });
+
+      req.user = decoded;
+
       next();
     });
   } else {
-    next();
+    return res.status(401).json({
+      error: 'No token provided, token is required in the Authorization Header',
+    });
   }
+}
+
+module.exports = {
+  authenticate,
 };
