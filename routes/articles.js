@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/like/:id", authenticate, async (req, res, next) => {
   const articleId = req.params.id;
-  const userId = req.decodedToken ? req.decodedToken.subject : null;
+  const userId = req.user ? req.user.subject : null;
   try {
     if (!userId) {
       return res
