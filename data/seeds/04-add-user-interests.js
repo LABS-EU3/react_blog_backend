@@ -4,12 +4,12 @@ exports.seed = function(knex) {
     .then(function () {
       // Inserts seed entries
       return knex('interests').insert([
-        {id: 1, userId: 1, name: "Cooking"},
-        {id: 2, userId: 1, name: "Arts & Crafts"},
-        {id: 3, userId: 1, name: "Business"},
-        {id: 4, userId: 1, name: "Tech"},
-        {id: 5, userId: 2, name: "Business"},
-        {id: 6, userId: 2, name: "Sport"}
+         { userId: 1, name: "Cooking"},
+         { userId: 1, name: "Arts & Crafts"},
+         { userId: 1, name: "Business"},
+         { userId: 1, name: "Tech"},
+         { userId: 2, name: "Business"},
+         { userId: 2, name: "Sport"}
       ]);
     });
 };
