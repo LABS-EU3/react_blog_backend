@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/", authenticate, async (req, res, next) => {
   try {
     const articles = await service.findArticles(
-      req.decodedToken ? req.decodedToken.subject : null
+      req.user ? req.user.subject : null
     );
     res.status(articles.statusCode).json(articles.data);
   } catch (error) {
@@ -121,6 +121,7 @@ router.post("/save", authenticate, async (req, res) => {
 
 router.get("/:articleId", async (req, res, next) => {
   try {
+    // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const { articleId } = req.params;
     const result = await service.getArticleInfo(articleId);
     res.status(result.statusCode).json(result.data);
