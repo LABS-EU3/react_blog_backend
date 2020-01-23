@@ -54,6 +54,22 @@ async function addNewArticle(article) {
   return response;
 }
 
+
+async function likeArticle(articleId, userId) {
+  const response = await articles.addArticleLike({ articleId, userId });
+  return response;
+}
+
+async function getArticleLikeCount(id) {
+  const response = await articles.getLikeCountByArticleId(id);
+  return response;
+}
+
+async function addNewCover(cover) {
+  const response = await articles.addCover(cover);
+  return response;
+}
+
 async function addTag(tag, id) {
   const response = await articles.addTag({ name: tag, articleId: id });
   return response;
@@ -88,12 +104,8 @@ async function uploadFile(image) {
 async function getArticleInfo(articleId) {
   try {
     const article = await articles.getArticlesById(articleId);
-    const tags = await articles.getArticleTags(articleId);
+    const tags = await articles.getArticleTags(article.id);
     const response = { ...article, tags };
-    // const body = article.body;
-    // const mystring = body.replace(/\\/g, "");
-    // console.log(JSON.parse(JSON.parse(response)));
-    // const legit = JSON.parse(mystring);
     if (!article) {
       return {
         statusCode: 404,
@@ -108,9 +120,12 @@ async function getArticleInfo(articleId) {
 }
 
 module.exports = {
+  likeArticle,
   findArticles,
   addNewArticle,
   addTag,
   uploadFile,
-  getArticleInfo
+  getArticleInfo,
+  getArticleLikeCount,
+  addNewCover
 };

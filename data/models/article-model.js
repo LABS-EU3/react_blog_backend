@@ -1,30 +1,53 @@
 const db = require("../dbConfig");
 
+async function addArticleLike(articleLike) {
+  try {
+    const ids = await db("articleLikes as al").insert(articleLike, "id");
+    const id = ids[0];
+    return id;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getLikeCountByArticleId(id) {
+  try {
+    let response = await db("articleLikes")
+      .count()
+      .where("articleId", id)
+      .first();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getFollowingArticles(id) {
   try {
     let response = [];
     let articles = await db("follows as f")
       .select(
-          "a.id",
-          "a.title",
-          "a.body",
-          "f.followingId as authorId",
-          "au.fullname as author",
-          "a.createdAt",
-          "a.updatedAt",
-          "a.coverImageUrl"
+        "a.id",
+        "a.custom_id",
+        "a.title",
+        "a.body",
+        "f.followingId as authorId",
+        "au.fullname as author",
+        "a.createdAt",
+        "a.updatedAt",
+        "a.coverImageUrl"
       )
       .join("users as u", "u.id", "f.followerId")
       .join("articles as a", "a.authorId", "f.followingId")
       .join("users as au", "au.id", "a.authorId")
       .where("f.followerId", id)
       .andWhere("a.isPublished", "true");
-      
-      for (let i = 0; i < articles.length; i++) {
-        await getTagsByArticleId(articles[i].id).then(res => {
-          response.push({ ...articles[i], tags: res });
-        });
-      }
+
+    for (let i = 0; i < articles.length; i++) {
+      await getTagsByArticleId(articles[i].id).then(res => {
+        response.push({ ...articles[i], tags: res });
+      });
+    }
 
     return response;
   } catch (error) {
@@ -39,6 +62,7 @@ async function getTrendingArticles() {
     let articles = await db("articles as a")
       .select(
         "a.id",
+        "a.custom_id",
         "title",
         "body",
         "authorId",
@@ -70,6 +94,7 @@ async function getArticlesByUserInterests(id) {
     let articles = await db("articles as a")
       .select(
         "a.id",
+        "a.custom_id",
         "a.title",
         "a.body",
         "au.id as authorId",
@@ -85,11 +110,11 @@ async function getArticlesByUserInterests(id) {
       .andWhere("a.isPublished", "true")
       .distinct();
 
-      for (let i = 0; i < articles.length; i++) {
-        await getTagsByArticleId(articles[i].id).then(res => {
-          response.push({ ...articles[i], tags: res });
-        });
-      }
+    for (let i = 0; i < articles.length; i++) {
+      await getTagsByArticleId(articles[i].id).then(res => {
+        response.push({ ...articles[i], tags: res });
+      });
+    }
 
     return response;
   } catch (error) {
@@ -99,11 +124,12 @@ async function getArticlesByUserInterests(id) {
 
 async function getGeneralFeed() {
   try {
-      let response = [];
+    let response = [];
 
     let articles = await db("articles as a")
       .select(
         "a.id",
+        "a.custom_id",
         "title",
         "body",
         "authorId",
@@ -114,12 +140,12 @@ async function getGeneralFeed() {
       )
       .join("users as u", "u.id", "a.authorId")
       .where("a.isPublished", "true");
-      
-      for (let i = 0; i < articles.length; i++) {
-        await getTagsByArticleId(articles[i].id).then(res => {
-          response.push({ ...articles[i], tags: res });
-        });
-      }
+
+    for (let i = 0; i < articles.length; i++) {
+      await getTagsByArticleId(articles[i].id).then(res => {
+        response.push({ ...articles[i], tags: res });
+      });
+    }
 
     return response;
   } catch (error) {
@@ -139,8 +165,6 @@ async function getTagsByArticleId(id) {
   }
 }
 
-
-
 async function addArticle(article) {
   try {
     const [id] = await db("articles").insert(article, "id");
@@ -151,12 +175,45 @@ async function addArticle(article) {
   }
 }
 
+async function addCover(cover) {
+  try {
+    const [id] = await db("covers").insert(cover, "id");
+    const response = await findCoverById(id);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function findCoverById(id) {
+  try {
+    const cover = await db("covers")
+      .where({ id: id })
+      .first();
+    return cover;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// async function findArticleCover(articleId) {
+//   try {
+//     const [{ url }] = await db("covers").where({ articleId: articleId });
+//     return url;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
 async function findArticleById(id) {
   try {
     const article = await db("articles")
       .where({ id: id })
       .first();
-    return article;
+    return {
+      ...article,
+      coverImageUrl: article.coverImageUrl.length ? article.coverImageUrl : ""
+    };
   } catch (error) {
     console.log(error);
   }
@@ -192,19 +249,21 @@ async function findTagById(id) {
     console.log(error);
   }
 }
-  
+
 async function getArticlesById(id) {
   try {
     const article = await db("articles")
       .select(
         "articles.id",
+        "articles.custom_id",
+        "articles.coverImageUrl",
         "title",
         "body",
         "authorId",
         "createdAt",
         "updatedAt"
       )
-      .where({ id: id })
+      .where({ custom_id: id })
       .first();
     const [{ fullname }] = await db("users")
       .select("fullname")
@@ -216,6 +275,8 @@ async function getArticlesById(id) {
 }
 
 module.exports = {
+  addArticleLike,
+  getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
   getGeneralFeed,
@@ -223,5 +284,6 @@ module.exports = {
   addArticle,
   addTag,
   getArticleTags,
-  getArticlesById
+  getArticlesById,
+  addCover
 };
