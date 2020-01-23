@@ -105,7 +105,7 @@ router.post("/publish", authenticate, async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.coverImageUrl = "https://getinsightly.s3.us-west-2.amazonaws.com/dummy-post-square-1-thegem-blog-slider-fullwidth.jpg";
+    articleToAdd.coverImageUrl = "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
