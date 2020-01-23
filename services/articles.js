@@ -54,6 +54,17 @@ async function addNewArticle(article) {
   return response;
 }
 
+
+async function likeArticle(articleId, userId) {
+  const response = await articles.addArticleLike({ articleId, userId });
+  return response;
+}
+
+async function getArticleLikeCount(id) {
+  const response = await articles.getLikeCountByArticleId(id);
+  return response;
+}
+
 async function addNewCover(cover) {
   const response = await articles.addCover(cover);
   return response;
@@ -108,10 +119,12 @@ async function getArticleInfo(articleId) {
 }
 
 module.exports = {
+  likeArticle,
   findArticles,
   addNewArticle,
   addTag,
   uploadFile,
   getArticleInfo,
+  getArticleLikeCount,
   addNewCover
 };

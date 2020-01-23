@@ -1,5 +1,27 @@
 const db = require("../dbConfig");
 
+async function addArticleLike(articleLike) {
+  try {
+    const ids = await db("articleLikes as al").insert(articleLike, "id");
+    const id = ids[0];
+    return id;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getLikeCountByArticleId(id) {
+  try {
+    let response = await db("articleLikes")
+      .count()
+      .where("articleId", id)
+      .first();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getFollowingArticles(id) {
   try {
     let response = [];
@@ -253,6 +275,8 @@ async function getArticlesById(id) {
 }
 
 module.exports = {
+  addArticleLike,
+  getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
   getGeneralFeed,
