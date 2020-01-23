@@ -42,6 +42,16 @@ router.get("/", loggedIn, async (req, res, next) => {
   }
 });
 
+router.get("/tags", async (req, res) => {
+  try {
+    const tags = await service.getAllTags();
+    res.status(200).json(tags)
+  }
+  catch(error) {
+    res.status(500).json({error: error.message})
+  }
+})
+
 // router.post("/uploadCover", async (req, res) => {
 //   let form = new formidable.IncomingForm();
 //   form.parse(req, async function(err, fields, files) {
