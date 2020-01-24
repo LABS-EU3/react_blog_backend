@@ -2,24 +2,23 @@ const express = require("express");
 
 const service = require("../services/interests");
 
-const { checkUserExistsById } = require("./utils/userExists");
-const {authenticate} = require("./utils/loggedIn");
+const { authenticate } = require("./utils/loggedIn");
 
 const router = express.Router();
 
 router.post("/", authenticate, async (req, res, next) => {
-    const interests = req.body;
-    try {
-        const userId = req.user.subject;
-        interests.map((interest) => {
-            service.addInterests({name: interest, userId})
-        })
-        return res.status(201).json({message: "Added successfully"});
-    } catch (error){
-        console.log(error)
-        next(error);
-    }
-})
+  const interests = req.body;
+  try {
+    const userId = req.user.subject;
+    interests.map(interest => {
+      service.addInterests({ name: interest, userId });
+    });
+    return res.status(201).json({ message: "Added successfully" });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 router.get("/", async (req, res, next) => {
   try {
@@ -34,15 +33,19 @@ router.get("/", async (req, res, next) => {
 router.delete("/", authenticate, async (req, res, next) => {
   const interests = req.body;
   try {
-      const userId = req.user.subject;
-      interests.map((interest) => {
-          service.removeInterest(userId, interest)
-      })
-    return res.status(200).json({message: "Successfully deleted", userId, interests})
-
+    const userId = req.user.subject;
+    const remove = interests.map(async interest => {
+      await service.removeInterest(userId, interest);
+    });
+    if (remove.length === interests.length) {
+      const newInterests = await service.getInterestsByUserId(userId);
+      return res
+        .status(200)
+        .json({ message: "Successfully deleted", userId, newInterests });
+    }
   } catch (error) {
-      console.log(error)
-    next(error)
+    console.log(error);
+    next(error);
   }
 });
 

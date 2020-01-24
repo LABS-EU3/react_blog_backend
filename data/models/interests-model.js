@@ -21,6 +21,17 @@ async function findUsersByInterest(id) {
   }
 }
 
+async function findInterestsByUserId(userId) {
+  try {
+    const interests = await db("interests")
+      .select("name")
+      .where({ userId });
+    return interests;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findInterests() {
   try {
     const interests = await db("interests").select("id", "name", "userId");
@@ -46,5 +57,6 @@ module.exports = {
   findInterests,
   addUserInterests,
   findUsersByInterest,
-  deleteUserInterest
+  deleteUserInterest,
+  findInterestsByUserId
 };
