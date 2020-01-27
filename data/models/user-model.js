@@ -20,10 +20,10 @@ async function subscribeUser(data) {
   }
 }
 
-async function unsubscribeUser(email) {
+async function unsubscribeUser(data) {
   try {
     await db('subscription')
-      .where({email: email})
+      .where({email: data})
       .update({status: 0});
     return true;
   } catch (error) {

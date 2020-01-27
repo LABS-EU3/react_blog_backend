@@ -11,7 +11,7 @@ async function addSubscription(data) {
 }
 
 async function removeSubscription(data) {
-  const response = await users.subscribeUser(data.email);
+  const response = await users.unsubscribeUser(data);
   if (response) {
     return { statusCode: 200, data: { message: 'Unsubscribed successful' } };
   } else {

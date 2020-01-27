@@ -17,7 +17,7 @@ router.post('/subscribe', async (req, res, next) => {
   try {
     const data = req.body;
     const response = await service.addSubscription(data);
-    res.status(response.statusCode).json(response.message);
+    res.status(response.statusCode).json(response.data);
   } catch (error) {
     next(error);
   }
@@ -27,7 +27,7 @@ router.post('/unsubscribe', async (req, res, next) => {
   try {
     const {email} = req.body;
     const response = await service.removeSubscription(email);
-    res.status(response.statusCode).json(response.message);
+    res.status(response.statusCode).json(response.data);
   } catch (error) {
     next(error);
   }
