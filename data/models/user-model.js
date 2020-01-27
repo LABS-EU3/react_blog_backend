@@ -11,19 +11,44 @@ async function addNewUser(user) {
   }
 }
 
+async function subscribeUser(data) {
+  try {
+    await db("subscription").insert(data);
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function unsubscribeUser(email) {
+  try {
+    await db('subscription')
+      .where({email: email})
+      .update({status: 0});
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function editUser(userData, id) {
   try {
     const user = await db("users")
-      .where({ id: id})
-      .update(userData)
-      return user;    
-  } catch(error) {
+      .where({ id: id })
+      .update(userData);
+    return user;
+  } catch (error) {
     console.log(error);
   }
 }
 async function findUsers() {
   try {
-    const users = await db("users").select("id", "fullname", "email", "avatarUrl");
+    const users = await db("users").select(
+      "id",
+      "fullname",
+      "email",
+      "avatarUrl"
+    );
     return users;
   } catch (error) {
     console.log(error);
@@ -54,17 +79,25 @@ async function verifyUser(token, id) {
   }
 }
 
-
 async function getBy(filter) {
   try {
-   const userResponse = await db("users")
-    .select("id", "fullname", "isVerified", "password", "email")
-    .where(filter)
-    .first()
+    const userResponse = await db("users")
+      .select("id", "fullname", "isVerified", "password", "email")
+      .where(filter)
+      .first();
     return userResponse;
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 }
 
-module.exports = { addNewUser, editUser, verifyUser, findUserById, findUsers, getBy };
+module.exports = {
+  addNewUser,
+  editUser,
+  verifyUser,
+  findUserById,
+  findUsers,
+  getBy,
+  subscribeUser,
+  unsubscribeUser
+};
