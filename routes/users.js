@@ -11,6 +11,26 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.post('/subscribe', async (req, res, next) => {
+  try {
+    const data = req.body;
+    const response = await service.addSubscription(data);
+    res.status(response.statusCode).json(response.message);
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.post('/unsubscribe', async (req, res, next) => {
+  try {
+    const {email} = req.body;
+    const response = await service.removeSubscription(email);
+    res.status(response.statusCode).json(response.message);
+  } catch (error) {
+    next(error);
+  }
+})
+
 router.get("/:userId", async (req, res, next) => {
   try {
     const { userId } = req.params;
