@@ -2,6 +2,7 @@ const AWS = require("aws-sdk");
 const fs = require("fs");
 const articles = require("../data/models/article-model");
 const config = require("../config");
+const sharp = require("sharp");
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -78,11 +79,14 @@ async function addTag(tag, id) {
 async function uploadFile(image) {
   try {
     const fileContent = fs.readFileSync(image.path);
-
+    let compressedImage = sharp(fileContent)
+    .jpeg({quality: 50})
+    .png({quality: 50})
+  
     const params = {
       Bucket: "getinsightly",
       Key: image.name, // File name you want to save as in S3
-      Body: fileContent
+      Body: compressedImage
     };
 
     const url = new Promise(resolve => {
