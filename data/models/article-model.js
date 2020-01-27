@@ -175,6 +175,15 @@ async function addArticle(article) {
   }
 }
 
+async function deleteArticle(id) {
+  try {
+    const response = await db("articles").where({id}).del();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function addCover(cover) {
   try {
     const [id] = await db("covers").insert(cover, "id");
@@ -286,6 +295,17 @@ async function getArticlesById(id) {
   }
 }
 
+async function findAllTags() {
+  try {
+    const tags = await db("tags")
+      .select("name", "id", "articleId")
+      .distinct();
+    return tags;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   addArticleLike,
   getLikeCountByArticleId,
@@ -294,9 +314,11 @@ module.exports = {
   getGeneralFeed,
   getTrendingArticles,
   addArticle,
+  deleteArticle,
   addTag,
   getArticleTags,
   getArticlesById,
   addCover,
-  updateArticle
+  updateArticle,
+  findAllTags
 };

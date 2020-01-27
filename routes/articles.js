@@ -40,6 +40,39 @@ router.get("/", authenticate, async (req, res, next) => {
   }
 });
 
+router.get("/tags", async (req, res) => {
+  try {
+    const tags = await service.getAllTags();
+    res.status(200).json(tags)
+  }
+  catch(error) {
+    res.status(500).json({error: error.message})
+  }
+})
+
+// router.post("/uploadCover", async (req, res) => {
+//   let form = new formidable.IncomingForm();
+//   form.parse(req, async function(err, fields, files) {
+//     console.log("files", fields);
+//     if (err) {
+//       console.error(err.message);
+//       return;
+//     }
+//     const result = await service.uploadFile(files.image);
+//     const coverToAdd = { url: result, articleId: fields.articleId };
+//     console.log(coverToAdd);
+//     try {
+//       const response = await service.addNewCover(coverToAdd);
+//       const { id } = response;
+//       return res.status(200).json(id);
+//     } catch (error) {
+//       res.status(500).json({
+//         error: error.message
+//       });
+//     }
+//   });
+// });
+
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
@@ -162,6 +195,24 @@ router.get("/:articleId", async (req, res, next) => {
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);
+  }
+});
+
+router.delete("/:articleId", async (req, res) => {
+  const { articleId } = req.params;
+  try {
+    const result = await service.removeArticle(articleId);
+    if (result) {
+      return res
+        .status(200)
+        .json({ message: "Succesfully Deleted", articleId });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Cannot Find Article", articleId });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
