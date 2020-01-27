@@ -18,19 +18,19 @@ async function getInterests(id) {
   }
 }
 
-async function getInterestsByUserId(id){
+async function getInterestsByUserId(id) {
   const interests = await interest.findInterestsByUserId(id);
   return interests;
 }
 
-async function removeInterest(userId, name) {
-  const response = await interest.deleteUserInterest(userId, name);
+async function removeInterests(userId, interests) {
+  const response = await interest.deleteUserInterests(userId, interests);
   return response;
 }
 
 module.exports = {
   addInterests,
   getInterests,
-  removeInterest,
+  removeInterests,
   getInterestsByUserId
 };
