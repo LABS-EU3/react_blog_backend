@@ -67,6 +67,41 @@ async function findUserById(id) {
   }
 }
 
+async function getFollowersCount(userId) {
+  try {
+    const followers = await db("follows")
+      .count()
+      .where("followingId", userId)
+      .first();
+    return followers;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getFollowingCount(userId) {
+  try {
+    const following = await db("follows")
+      .count()
+      .where("followerId", userId)
+      .first();
+    return following;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getInterests(userId) {
+  try {
+    const interests = await db("interests")
+      .select("name")
+      .where({userId});
+    return interests;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function verifyUser(token, id) {
   try {
     await db("users")
@@ -99,5 +134,8 @@ module.exports = {
   findUsers,
   getBy,
   subscribeUser,
-  unsubscribeUser
+  unsubscribeUser,
+  getFollowingCount,
+  getFollowersCount,
+  getInterests
 };
