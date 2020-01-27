@@ -142,7 +142,7 @@ async function getArticleByAuthorId(authorId) {
         data: { message: `Cannot find articles with authorid of ${authorId} ` }
       };
     } else {
-      return { statusCode: 200, data: { response } };
+      return { statusCode: 200, data: response };
     }
   } catch (err) {
     console.log(err);
