@@ -54,7 +54,6 @@ async function addNewArticle(article) {
   return response;
 }
 
-
 async function likeArticle(articleId, userId) {
   const response = await articles.addArticleLike({ articleId, userId });
   return response;
@@ -118,6 +117,19 @@ async function getArticleInfo(articleId) {
   }
 }
 
+async function checkIfArticleExistsToSave(articleId) {
+  try {
+    const article = await articles.getArticlesById(articleId);
+    if (!article) {
+      return false;
+    } else {
+      return true;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   likeArticle,
   findArticles,
@@ -126,5 +138,6 @@ module.exports = {
   uploadFile,
   getArticleInfo,
   getArticleLikeCount,
-  addNewCover
+  addNewCover,
+  checkIfArticleExistsToSave
 };
