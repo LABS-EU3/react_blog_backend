@@ -4,7 +4,7 @@ const { checkIfUserIsLoggedIn } = require('./utils/userIsLoggedIn')
 
 const router = express.Router();
 
-router.post('/reactions', checkIfUserIsLoggedIn, async(req, res) => {
+router.post('/', checkIfUserIsLoggedIn, async(req, res) => {
     const reaction = req.body;
     try {
         const response = await service.addNewReaction(reaction);
