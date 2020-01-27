@@ -230,6 +230,18 @@ async function addTag(tag) {
   }
 }
 
+async function updateArticle(id, post) {
+  try {
+    await db("articles")
+      .where({ custom_id: id })
+      .update(post);
+    const response = await getArticlesById(id);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getArticleTags(articleId) {
   try {
     const tags = await db("tags").where({ articleId: articleId });
@@ -285,5 +297,6 @@ module.exports = {
   addTag,
   getArticleTags,
   getArticlesById,
-  addCover
+  addCover,
+  updateArticle
 };

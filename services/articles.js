@@ -117,6 +117,11 @@ async function getArticleInfo(articleId) {
   }
 }
 
+async function updateArticle(articleId) {
+  const updatedArticle = await articles.updateArticle(articleId);
+  return updatedArticle;
+}
+
 async function checkIfArticleExistsToSave(articleId) {
   try {
     const article = await articles.getArticlesById(articleId);
@@ -139,5 +144,6 @@ module.exports = {
   getArticleInfo,
   getArticleLikeCount,
   addNewCover,
-  checkIfArticleExistsToSave
+  checkIfArticleExistsToSave,
+  updateArticle
 };

@@ -1,6 +1,6 @@
 const express = require("express");
 const service = require("../services/articles");
-const {authenticate} = require("./utils/loggedIn");
+const { authenticate } = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
@@ -17,14 +17,12 @@ router.post("/like/:id", authenticate, async (req, res, next) => {
     }
     await service.likeArticle(articleId, userId);
     const likeCount = await service.getArticleLikeCount(articleId);
-    res
-      .status(200)
-      .json({
-        message: "Successfully liked article",
-        userId,
-        articleId,
-        newLikeCount: likeCount.count
-      });
+    res.status(200).json({
+      message: "Successfully liked article",
+      userId,
+      articleId,
+      newLikeCount: likeCount.count
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -105,42 +103,68 @@ router.post("/publish", authenticate, async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.coverImageUrl = "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
+    articleToAdd.coverImageUrl =
+      "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
     }
-    try {
-      const response = await service.addNewArticle(articleToAdd);
-      const { id } = response;
-      for (const tag of tagsToAdd) {
-        const savedTag = await service.addTag(tag["name"], id);
-        responseTags.push(savedTag);
+
+    const isArticlePresent = await service.checkIfArticleExistsToSave(
+      articleToAdd.custom_id
+    );
+    if (!isArticlePresent) {
+      try {
+        const response = await service.addNewArticle(articleToAdd);
+        const { id } = response;
+        if (tagsToAdd.length) {
+          for (const tag of tagsToAdd) {
+            const savedTag = await service.addTag(tag["name"], id);
+            responseTags.push(savedTag);
+          }
+        }
+        return res.status(200).json({ ...response, tags: responseTags });
+      } catch (error) {
+        res.status(500).json({
+          error: error.message
+        });
       }
-      console.log("response", {
-        ...response,
-        tags: responseTags
-      });
-      return res.status(200).json({ ...response, tags: responseTags });
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
+    } else {
+      try {
+        const updatedArticle = service.updateArticle(articleToAdd.custom_id);
+        if (tagsToAdd.length) {
+          for (const tag of tagsToAdd) {
+            const savedTag = await service.addTag(
+              tag["name"],
+              updatedArticle.id
+            );
+            responseTags.push(savedTag);
+          }
+        }
+        return updatedArticle;
+      } catch (error) {
+        console.log(error);
+      }
     }
   });
 });
 
 router.post("/save", authenticate, async (req, res) => {
   const article = req.body;
-  try {
-    const articleToAdd = _.omit(article, "tags");
-    const response = await service.addNewArticle(articleToAdd);
-    console.log(response);
-    return res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
+  const isArticlePresent = await service.checkIfArticleExistsToSave(
+    article.custom_id
+  );
+  if (!isArticlePresent) {
+    try {
+      const articleToAdd = _.omit(article, "tags");
+      const response = await service.addNewArticle(articleToAdd);
+      console.log(response);
+      return res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
   }
 });
 
