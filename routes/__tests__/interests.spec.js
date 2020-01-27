@@ -44,7 +44,7 @@ describe("server", () => {
         .delete("/api/interests")
         .set("Authorization", dummyToken)
         .send(["Tech"]);
-      expect(response.status).toBe(404);
+      expect(response.status).not.toBe(200);
       expect(response.body.message).toBe(
         "User does not have interests provided in req body"
       );
