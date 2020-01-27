@@ -211,7 +211,7 @@ const server = require("../../app");
 //       '{"message":"Must be logged in to like article."}'
 //     );
 //   });
-  
+
 //   // test("Should return status 200, user id, article id and new like count for given article if uesr id and article id present", async () => {
 //   //   const mockUserData = {
 //   //     fullname: "Test user",
@@ -278,7 +278,13 @@ describe("server", () => {
   describe("[GET] /articles/author/:authorId endpoint", () => {
     test("Should return 200 if successful", async () => {
       const response = await request(server).get("/api/articles/author/1");
-     expect(response.status).toBe(200)
-    })
-  })
+      expect(response.status).toBe(200);
+    });
+    test("Should return 404 if invalid author id provided", async () => {
+      const response = await request(server).get(
+        "/api/articles/author/11235345435"
+      );
+      expect(response.status).toBe(404);
+    });
+  });
 });
