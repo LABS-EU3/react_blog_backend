@@ -22,7 +22,9 @@ async function getReactions() {
                 'r.authorId', 
                 'r.title', 
                 'articleId',
-                'r.avatarUrl'
+                'r.avatarUrl',
+                'r.fullname',
+                'r.reactorId'
             )
             .join('articles as a', 'a.id', 'r.articleId')
             .join('users as u', 'u.id', 'r.userId')
