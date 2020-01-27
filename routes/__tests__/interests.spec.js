@@ -45,9 +45,6 @@ describe("server", () => {
         .set("Authorization", dummyToken)
         .send(["Tech"]);
       expect(response.status).not.toBe(200);
-      expect(response.body.message).toBe(
-        "User does not have interests provided in req body"
-      );
     });
   });
 });
