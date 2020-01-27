@@ -100,17 +100,21 @@ async function uploadFile(image) {
   }
 }
 
-async function getArticleInfo(articleId) {
+async function getArticleInfo(userId, articleId) {
   try {
     const article = await articles.getArticlesById(articleId);
     const tags = await articles.getArticleTags(article.id);
-    const response = { ...article, tags };
+    const like = await articles.getIfUserLikesArticle(userId, articleId);
+    const response = { ...article, tags, like };
     if (!article) {
       return {
         statusCode: 404,
         data: { message: `Cannot find article id of ${articleId}. ` }
       };
     } else {
+      if (userId && articleId)
+      return { message: `User has already liked article of id ${articleId}` 
+    }
       return { statusCode: 200, data: { response } };
     }
   } catch (err) {
