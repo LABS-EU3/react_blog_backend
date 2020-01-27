@@ -118,7 +118,7 @@ router.post("/publish", authenticate, async (req, res) => {
             responseTags.push(savedTag);
           }
         }
-        return res.status(201).json(updatedArticle);
+        return res.status(201).json({ ...updatedArticle, justUpdated: true });
       } catch (error) {
         console.log(error);
       }
