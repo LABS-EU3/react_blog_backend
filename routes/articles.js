@@ -40,29 +40,6 @@ router.get("/", authenticate, async (req, res, next) => {
   }
 });
 
-// router.post("/uploadCover", async (req, res) => {
-//   let form = new formidable.IncomingForm();
-//   form.parse(req, async function(err, fields, files) {
-//     console.log("files", fields);
-//     if (err) {
-//       console.error(err.message);
-//       return;
-//     }
-//     const result = await service.uploadFile(files.image);
-//     const coverToAdd = { url: result, articleId: fields.articleId };
-//     console.log(coverToAdd);
-//     try {
-//       const response = await service.addNewCover(coverToAdd);
-//       const { id } = response;
-//       return res.status(200).json(id);
-//     } catch (error) {
-//       res.status(500).json({
-//         error: error.message
-//       });
-//     }
-//   });
-// });
-
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
@@ -141,7 +118,7 @@ router.post("/publish", authenticate, async (req, res) => {
             responseTags.push(savedTag);
           }
         }
-        return updatedArticle;
+        return res.status(201).json(updatedArticle);
       } catch (error) {
         console.log(error);
       }
@@ -151,15 +128,24 @@ router.post("/publish", authenticate, async (req, res) => {
 
 router.post("/save", authenticate, async (req, res) => {
   const article = req.body;
+  const articleToAdd = _.omit(article, "tags");
   const isArticlePresent = await service.checkIfArticleExistsToSave(
-    article.custom_id
+    articleToAdd.custom_id
   );
   if (!isArticlePresent) {
     try {
-      const articleToAdd = _.omit(article, "tags");
       const response = await service.addNewArticle(articleToAdd);
       console.log(response);
       return res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
+  } else {
+    try {
+      const response = service.updateArticle(articleToAdd.custom_id);
+      return res.status(201).json(response);
     } catch (error) {
       res.status(500).json({
         error: error.message
