@@ -17,14 +17,12 @@ router.post("/like/:id", authenticate, async (req, res, next) => {
     }
     await service.likeArticle(articleId, userId);
     const likeCount = await service.getArticleLikeCount(articleId);
-    res
-      .status(200)
-      .json({
-        message: "Successfully liked article",
-        userId,
-        articleId,
-        newLikeCount: likeCount.count
-      });
+    res.status(200).json({
+      message: "Successfully liked article",
+      userId,
+      articleId,
+      newLikeCount: likeCount.count
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -152,6 +150,24 @@ router.get("/:articleId", async (req, res, next) => {
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);
+  }
+});
+
+router.delete("/:articleId", async (req, res) => {
+  const { articleId } = req.params;
+  try {
+    const result = await service.removeArticle(articleId);
+    if (result) {
+      return res
+        .status(200)
+        .json({ message: "Succesfully Deleted", articleId });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Cannot Find Article", articleId });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

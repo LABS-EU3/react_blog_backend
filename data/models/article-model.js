@@ -175,6 +175,15 @@ async function addArticle(article) {
   }
 }
 
+async function deleteArticle(id) {
+  try {
+    const response = await db("articles").where({id}).del();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function addCover(cover) {
   try {
     const [id] = await db("covers").insert(cover, "id");
@@ -282,6 +291,7 @@ module.exports = {
   getGeneralFeed,
   getTrendingArticles,
   addArticle,
+  deleteArticle,
   addTag,
   getArticleTags,
   getArticlesById,

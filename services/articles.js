@@ -55,6 +55,10 @@ async function addNewArticle(article) {
   return response;
 }
 
+async function removeArticle(id) {
+  const response = await articles.deleteArticle(id);
+  return response;
+}
 
 async function likeArticle(articleId, userId) {
   const response = await articles.addArticleLike({ articleId, userId });
@@ -126,6 +130,7 @@ module.exports = {
   likeArticle,
   findArticles,
   addNewArticle,
+  removeArticle,
   addTag,
   uploadFile,
   getArticleInfo,
