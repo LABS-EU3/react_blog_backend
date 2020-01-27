@@ -1,6 +1,7 @@
 const express = require("express");
 const service = require("../services/users");
 const { uploadFile } = require("../services/articles");
+const formidable = require("formidable");
 const router = express.Router();
 const formidable = require("formidable");
 
@@ -16,8 +17,8 @@ router.get("/", async (req, res, next) => {
 router.get("/:userId", async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const result = await service.getUserInfo(userId);
-    res.status(result.statusCode).json(result.data);
+    const user = await service.getUserInfo(userId);
+    res.status(user.statusCode).json(user.data);
   } catch (err) {
     next(err);
   }
@@ -47,6 +48,7 @@ router.put("/:userId", async (req, res, next) => {
       next(error);
     }
   });
-});
+})
+
 
 module.exports = router;
