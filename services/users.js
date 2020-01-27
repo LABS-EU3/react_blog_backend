@@ -1,4 +1,6 @@
 const users = require("../data/models/user-model");
+const bcrypt = require("bcryptjs");
+const { generateToken, generateVerificationToken } = require("../routes/utils/generateToken");
 
 async function getUsers() {
   const allUsers = await users.findUsers();
@@ -41,12 +43,22 @@ async function findFollowingCount(id) {
 }
 
 async function editUserInfo(userInfo, userId) {
-  const user = await users.editUser(userInfo, userId);
 
-  if (!user) {
-    return { statusCode: 404, data: { message: "User does not exist" } };
-  } else {
-    return { statusCode: 200, data: { user } };
+  try {
+    const user = await users.editUser(userInfo, userId);
+
+      if(!user) {
+        return { statusCode: 404, data: { message: "User does not exist" } };
+      } else {      
+        return { 
+          statusCode: 200, 
+          data: { 
+            user 
+          } 
+        };
+      }
+  } catch (error) {
+    return error.message;  
   }
 }
 
