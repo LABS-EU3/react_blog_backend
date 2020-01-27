@@ -10,6 +10,21 @@ async function addArticleLike(articleLike) {
   }
 }
 
+async function getIfUserLikesArticle(userId, articleId) {
+  try {
+    let response = await db("articleLikes")
+      .select(
+        "userId",
+        "articleId"
+      )
+      .where("userId", userId)
+      .andWhere("articleId", articleId)
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getLikeCountByArticleId(id) {
   try {
     let response = await db("articleLikes")
@@ -268,6 +283,7 @@ async function getArticlesById(id) {
     const [{ fullname }] = await db("users")
       .select("fullname")
       .where({ id: article.authorId });
+
     return { ...article, authorName: fullname };
   } catch (error) {
     console.log(error);
@@ -276,6 +292,7 @@ async function getArticlesById(id) {
 
 module.exports = {
   addArticleLike,
+  getIfUserLikesArticle,
   getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
