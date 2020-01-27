@@ -210,9 +210,6 @@ async function findAuthorArticle(authorId) {
     const article = await db("articles")
       .select()
       .where({ authorId: authorId })
-
-    // .andWhere("isPublished", "true")
-    // .first();
     return article;
   } catch (error) {
     console.log(error);
