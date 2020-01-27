@@ -1,5 +1,5 @@
-// const request = require("supertest");
-// const server = require("../../app");
+const request = require("supertest");
+const server = require("../../app");
 // const db = require("../../data/dbConfig");
 
 // beforeAll(async () => {
@@ -274,4 +274,11 @@ describe("server", () => {
       expect(process.env.DB_ENV).toBe("testing");
     });
   });
+
+  describe("[GET] /articles/author/:authorId endpoint", () => {
+    test("Should return 200 if successful", async () => {
+      const response = await request(server).get("/api/articles/author/1");
+     expect(response.status).toBe(200)
+    })
+  })
 });
