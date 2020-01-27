@@ -41,11 +41,11 @@ async function findInterests() {
   }
 }
 
-async function deleteUserInterest(userId, name) {
+async function deleteUserInterests(userId, interests) {
   try {
     const response = await db("interests")
-      .where({ userId })
-      .andWhere({ name })
+      .whereIn("name", interests)
+      .andWhere({ userId })
       .del();
     return response;
   } catch (error) {
@@ -57,6 +57,6 @@ module.exports = {
   findInterests,
   addUserInterests,
   findUsersByInterest,
-  deleteUserInterest,
+  deleteUserInterests,
   findInterestsByUserId
 };
