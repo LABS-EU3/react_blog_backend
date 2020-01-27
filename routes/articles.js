@@ -17,14 +17,12 @@ router.post("/like/:id", authenticate, async (req, res, next) => {
     }
     await service.likeArticle(articleId, userId);
     const likeCount = await service.getArticleLikeCount(articleId);
-    res
-      .status(200)
-      .json({
-        message: "Successfully liked article",
-        userId,
-        articleId,
-        newLikeCount: likeCount.count
-      });
+    res.status(200).json({
+      message: "Successfully liked article",
+      userId,
+      articleId,
+      newLikeCount: likeCount.count
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -39,6 +37,15 @@ router.get("/", authenticate, async (req, res, next) => {
     res.status(articles.statusCode).json(articles.data);
   } catch (error) {
     next(error);
+  }
+});
+
+router.get("/tags", async (req, res) => {
+  try {
+    const tags = await service.getAllTags();
+    res.status(200).json(tags);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -67,7 +74,7 @@ router.get("/", authenticate, async (req, res, next) => {
 
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
-  form.parse(req, async function (err, fields, files) {
+  form.parse(req, async function(err, fields, files) {
     if (err) {
       console.error(err.message);
       return;
@@ -91,7 +98,7 @@ router.post("/fetchUrl", (req, res) => {
 
 router.post("/publish", authenticate, async (req, res) => {
   let form = new formidable.IncomingForm();
-  form.parse(req, async function (err, fields, files) {
+  form.parse(req, async function(err, fields, files) {
     // eslint-disable-next-line no-unused-vars
     let result = "";
     if (err) {
@@ -105,7 +112,8 @@ router.post("/publish", authenticate, async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.coverImageUrl = "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
+    articleToAdd.coverImageUrl =
+      "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
@@ -159,9 +167,27 @@ router.get("/author/:authorId", async (req, res, next) => {
   try {
     const { authorId } = req.params;
     const result = await service.getArticleByAuthorId(authorId);
-    res.status (result.statusCode).json(result.data);
+    res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);
+  }
+});
+
+router.delete("/:articleId", async (req, res) => {
+  const { articleId } = req.params;
+  try {
+    const result = await service.removeArticle(articleId);
+    if (result) {
+      return res
+        .status(200)
+        .json({ message: "Succesfully Deleted", articleId });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Cannot Find Article", articleId });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
