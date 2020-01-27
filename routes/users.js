@@ -3,6 +3,7 @@ const service = require("../services/users");
 const { uploadFile } = require("../services/articles");
 const formidable = require("formidable");
 const router = express.Router();
+const { checkIfUserIsLoggedIn } = require('./utils/userIsLoggedIn');
 
 router.get("/", async (req, res, next) => {
   try {

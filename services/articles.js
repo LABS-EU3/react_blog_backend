@@ -98,6 +98,7 @@ async function uploadFile(image) {
       Body: compressedImage
     };
 
+
     const url = new Promise(resolve => {
       s3.upload(params, function (err, data) {
         if (err) {
