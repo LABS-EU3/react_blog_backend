@@ -80,6 +80,11 @@ async function addTag(tag, id) {
   return response;
 }
 
+async function getAllTags() {
+  const response = await articles.findAllTags();
+  return response;
+}
+
 async function uploadFile(image) {
   try {
     const fileContent = fs.readFileSync(image.path);
@@ -135,5 +140,6 @@ module.exports = {
   uploadFile,
   getArticleInfo,
   getArticleLikeCount,
-  addNewCover
+  addNewCover,
+  getAllTags
 };
