@@ -1,5 +1,24 @@
 const users = require("../data/models/user-model");
 
+
+async function addSubscription(data) {
+  const response = await users.subscribeUser(data);
+  if (response) {
+    return { statusCode: 201, data: { message: 'Subscription successful' } };
+  } else {
+    return { statusCode: 400, data: { message: 'Something went wrong on our end, try again in a sec, while we fix it' } };
+  }
+}
+
+async function removeSubscription(data) {
+  const response = await users.subscribeUser(data.email);
+  if (response) {
+    return { statusCode: 200, data: { message: 'Unsubscribed successful' } };
+  } else {
+    return { statusCode: 400, data: { message: 'Something went wrong on our end, try again in a sec, while we fix it' } };
+  }
+}
+
 async function getUsers() {
   const allUsers = await users.findUsers();
 
@@ -33,5 +52,7 @@ async function editUserInfo(userInfo, userId) {
 module.exports = {
   getUserInfo,
   getUsers,
-  editUserInfo
+  editUserInfo,
+  addSubscription,
+  removeSubscription
 };
