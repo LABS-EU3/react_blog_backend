@@ -86,7 +86,7 @@ async function uploadFile(image) {
     };
 
     const url = new Promise(resolve => {
-      s3.upload(params, function(err, data) {
+      s3.upload(params, function (err, data) {
         if (err) {
           throw err;
         }
@@ -118,6 +118,25 @@ async function getArticleInfo(articleId) {
   }
 }
 
+async function getArticleByAuthorId(authorId) {
+  try {
+    const response = await articles.findAuthorArticle(authorId);
+    // const articles = { articles };
+
+    if (!response) {
+      return {
+        statusCode: 404,
+        data: { message: `Cannot find articles with authorid of ${authorId} ` }
+      };
+    } else {
+      return { statusCode: 200, data: { response } };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+
 module.exports = {
   likeArticle,
   findArticles,
@@ -126,5 +145,6 @@ module.exports = {
   uploadFile,
   getArticleInfo,
   getArticleLikeCount,
-  addNewCover
+  addNewCover,
+  getArticleByAuthorId
 };

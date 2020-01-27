@@ -205,6 +205,20 @@ async function findCoverById(id) {
 //   }
 // }
 
+async function findAuthorArticle(authorId) {
+  try {
+    const article = await db("articles")
+      .select()
+      .where({ authorId: authorId })
+
+    // .andWhere("isPublished", "true")
+    // .first();
+    return article;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findArticleById(id) {
   try {
     const article = await db("articles")
@@ -285,5 +299,6 @@ module.exports = {
   addTag,
   getArticleTags,
   getArticlesById,
-  addCover
+  addCover,
+  findAuthorArticle
 };

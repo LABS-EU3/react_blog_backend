@@ -1,6 +1,6 @@
 const express = require("express");
 const service = require("../services/articles");
-const {authenticate} = require("./utils/loggedIn");
+const { authenticate } = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
@@ -67,7 +67,7 @@ router.get("/", authenticate, async (req, res, next) => {
 
 router.post("/uploadFile", async (req, res) => {
   let form = new formidable.IncomingForm();
-  form.parse(req, async function(err, fields, files) {
+  form.parse(req, async function (err, fields, files) {
     if (err) {
       console.error(err.message);
       return;
@@ -91,7 +91,7 @@ router.post("/fetchUrl", (req, res) => {
 
 router.post("/publish", authenticate, async (req, res) => {
   let form = new formidable.IncomingForm();
-  form.parse(req, async function(err, fields, files) {
+  form.parse(req, async function (err, fields, files) {
     // eslint-disable-next-line no-unused-vars
     let result = "";
     if (err) {
@@ -150,6 +150,16 @@ router.get("/:articleId", async (req, res, next) => {
     const { articleId } = req.params;
     const result = await service.getArticleInfo(articleId);
     res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/author/:authorId", async (req, res, next) => {
+  try {
+    const { authorId } = req.params;
+    const result = await service.getArticleByAuthorId(authorId);
+    res.status (result.statusCode).json(result.data);
   } catch (err) {
     next(err);
   }
