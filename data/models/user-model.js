@@ -38,7 +38,7 @@ async function findUsers() {
 async function findUserById(id) {
   try {
     const user = await db("users")
-      .select("id", "email", "fullname", "jwt", "avatarUrl", "isVerified")
+      .select("id", "email", "fullname", "jwt", "avatarUrl", "isVerified", "bio")
       .where({ id: id })
       .first();
     return user;
