@@ -55,6 +55,11 @@ async function addNewArticle(article) {
   return response;
 }
 
+async function getArticles() {
+  const response = await articles.getAllArticles();
+  return response;
+}
+
 async function removeArticle(id) {
   const response = await articles.deleteArticle(id);
   return response;
@@ -89,15 +94,14 @@ async function uploadFile(image) {
   try {
     const fileContent = fs.readFileSync(image.path);
     let compressedImage = sharp(fileContent)
-    .jpeg({quality: 50})
-    .png({quality: 50})
-  
+      .jpeg({ quality: 50 })
+      .png({ quality: 50 });
+
     const params = {
       Bucket: "getinsightly",
       Key: image.name, // File name you want to save as in S3
       Body: compressedImage
     };
-
 
     const url = new Promise(resolve => {
       s3.upload(params, function(err, data) {
@@ -162,5 +166,6 @@ module.exports = {
   addNewCover,
   checkIfArticleExistsToSave,
   updateArticle,
-  getAllTags
+  getAllTags,
+  getArticles
 };
