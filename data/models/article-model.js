@@ -25,6 +25,23 @@ async function getIfUserLikesArticle(userId, articleId) {
   }
 }
 
+async function getReactionByUser(reactorId, authorId) {
+  try {
+      const response = await db("reactions")
+      .select(
+          "reactorId",
+          "authorId",
+          "highlighted_text"
+      )
+      .where("reactorId", reactorId)
+      .andWhere("authorId", authorId)
+      return response;
+  } catch(error) {
+      console.log(error);
+  }
+}
+
+
 async function getLikeCountByArticleId(id) {
   try {
     let response = await db("articleLikes")
@@ -313,6 +330,7 @@ async function findAllTags() {
 module.exports = {
   addArticleLike,
   getIfUserLikesArticle,
+  getReactionByUser,
   getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
