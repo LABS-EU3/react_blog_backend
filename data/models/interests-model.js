@@ -24,7 +24,7 @@ async function findUsersByInterest(id) {
 async function findUsersByInterestName(interests) {
   try {
     const userIds = await db("interests as i")
-      .select("u.id", "u.fullname", "u.bio", "u.avatarUrl")
+      .select("u.id", "u.fullname", "u.bio", "u.avatarUrl", "i.name")
       .join("users as u", "u.id", "i.userId")
       .whereIn("i.name", interests)
       .distinct();
