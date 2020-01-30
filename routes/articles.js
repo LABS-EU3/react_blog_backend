@@ -40,6 +40,7 @@ router.get("/", authenticate, async (req, res, next) => {
   }
 });
 
+
 router.get("/tags", async (req, res) => {
   try {
     const tags = await service.getAllTags();
