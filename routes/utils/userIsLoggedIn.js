@@ -15,7 +15,7 @@ exports.checkIfUserIsLoggedIn = async (req, res, next) => {
         error: "Invalid token, please try again after re-logging in."
       });
     } else {
-      jwt.verify(token, secrets.jwtSecret, (error, decodedToken) => {
+      jwt.verify(token, "yadiyadiyadi", (error, decodedToken) => {
         if (error) {
           switch (error.name) {
             case "TokenExpiredError":
