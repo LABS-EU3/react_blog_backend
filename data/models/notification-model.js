@@ -34,4 +34,4 @@ async function findNotificationById(id) {
   }
 }
 
-module.exports = { addNotification, updateNotification, findNotificationById };
+module.exports = { addNotification, updateNotification };
