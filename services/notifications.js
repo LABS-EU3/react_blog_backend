@@ -18,9 +18,9 @@ async function getUserNotifications(userId) {
   }
 }
 
-async function updateNotification(id, notification) {
+async function updateNotification(id) {
   try {
-    const response = await notifications.updateNotification(id, notification);
+    const response = await notifications.updateNotification(id);
     return response;
   } catch (error) {
     console.log(error);

@@ -27,6 +27,17 @@ router.get("/", authenticate, async (req, res, next) => {
   const userId = req.user.subject;
   try {
     const response = service.getUserNotifications(userId);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.put("/:id", authenticate, async (req, res, next) => {
+  let { id } = req.params;
+  try {
+    const response = await service.updateNotification(id);
     return res.status(201).json(response);
   } catch (error) {
     console.log(error);
