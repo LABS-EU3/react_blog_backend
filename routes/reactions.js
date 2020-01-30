@@ -1,12 +1,12 @@
 const express = require("express");
 const service = require("../services/reactions");
-const { checkIfUserIsLoggedIn } = require("./utils/userIsLoggedIn");
 const notification_service = require("../services/notifications");
+const { authenticate } = require("./utils/loggedIn");
 const _ = require("lodash");
 const pusher = require("./utils/pusherConfig");
 const router = express.Router();
 
-router.post("/", checkIfUserIsLoggedIn, async (req, res) => {
+router.post("/", authenticate, async (req, res) => {
   const incoming = req.body;
   const new_notification = req.body.notification;
   const reaction = _.omit(incoming, "notification");
