@@ -1,21 +1,8 @@
 const notifications = require("../data/models/notification-model");
-let Pusher = require("pusher");
-
-let pusher = new Pusher({
-  appId: "939438",
-  key: "ed02993fd520fcbcb423",
-  secret: "52f7ae37bfb2b2ef39ff",
-  cluster: "eu",
-  encrypted: true
-});
-
-pusher.trigger("notifications-channel", "new-notification", {
-  message: "hello world"
-});
 
 async function addNotification(notification) {
   try {
-    const response = await notifications.addNotification(notification);
+    const response = await notifications.addNotification(notification); ///{id, type, actorId, subjectId, isRead: false, content:""}
     return response;
   } catch (error) {
     console.log(error);
