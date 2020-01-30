@@ -16,12 +16,10 @@ router.post("/", checkIfUserIsLoggedIn, async (req, res) => {
     const notification = await notification_service.addNotification(
       new_notification
     );
-    if (response) {
-      if (notification.subjectId === userId) {
-        pusher.trigger("notifications-channel", "new-notification", {
-          notification
-        });
-      }
+    if (response && notification.subjectId === userId) {
+      pusher.trigger("notifications-channel", "new-notification", {
+        notification
+      });
     }
     return res.status(201).json(response);
   } catch (error) {
