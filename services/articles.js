@@ -89,9 +89,9 @@ async function uploadFile(image) {
   try {
     const fileContent = fs.readFileSync(image.path);
     let compressedImage = sharp(fileContent)
-    .jpeg({quality: 50})
-    .png({quality: 50})
-  
+      .jpeg({ quality: 50 })
+      .png({ quality: 50 })
+
     const params = {
       Bucket: "getinsightly",
       Key: image.name, // File name you want to save as in S3
@@ -100,7 +100,7 @@ async function uploadFile(image) {
 
 
     const url = new Promise(resolve => {
-      s3.upload(params, function(err, data) {
+      s3.upload(params, function (err, data) {
         if (err) {
           throw err;
         }
@@ -114,12 +114,13 @@ async function uploadFile(image) {
   }
 }
 
-async function getArticleInfo(userId, articleId) {
+async function getArticleInfo(userId, articleId, reactorId, authorId) {
   try {
     const article = await articles.getArticlesById(articleId);
     const tags = await articles.getArticleTags(article.id);
     const like = await articles.getIfUserLikesArticle(userId, articleId);
-    const response = { ...article, tags, like };
+    const reaction = await articles.getReactionByUser(reactorId, authorId);
+    const response = { ...article, tags, like, reaction };
     if (!article) {
       return {
         statusCode: 404,
@@ -127,8 +128,11 @@ async function getArticleInfo(userId, articleId) {
       };
     } else {
       if (userId && articleId)
-      return { message: `User has already liked article of id ${articleId}` 
-    }
+        return {
+          message: `User has already liked article of id ${articleId}`
+        }
+      if (reactorId && authorId)
+        return { message: `User has reacted to article of id ${articleId}` }
       return { statusCode: 200, data: { response } };
     }
   } catch (err) {
