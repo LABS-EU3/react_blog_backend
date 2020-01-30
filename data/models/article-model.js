@@ -295,17 +295,6 @@ async function getArticlesById(id) {
   }
 }
 
-async function findAllTags() {
-  try {
-    const tags = await db("tags")
-      .select("name", "id", "articleId")
-      .distinct();
-    return tags;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 module.exports = {
   addArticleLike,
   getLikeCountByArticleId,
@@ -320,5 +309,6 @@ module.exports = {
   getArticlesById,
   addCover,
   updateArticle,
-  findAllTags
+  findAllTags,
+  addCover
 };
