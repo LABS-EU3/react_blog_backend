@@ -9,6 +9,15 @@ async function addNotification(notification) {
   }
 }
 
+async function getUserNotifications(userId) {
+  try {
+    const response = await notifications.getUserNotifications(userId);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function updateNotification(id, notification) {
   try {
     const response = await notifications.updateNotification(id, notification);
@@ -18,4 +27,4 @@ async function updateNotification(id, notification) {
   }
 }
 
-module.exports = { addNotification, updateNotification };
+module.exports = { addNotification, updateNotification, getUserNotifications };

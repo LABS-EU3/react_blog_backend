@@ -28,6 +28,29 @@ async function updateNotification(id, notification) {
   }
 }
 
+async function getUserNotifications(userId) {
+  try {
+    const response = await db("notifications")
+      .select(
+        "notifications.id",
+        "notifications.type",
+        "notifications.actorId",
+        "notifications.content",
+        "articles.title as articleTitle",
+        "articles.custom_id as articleId",
+        "users.fullname as actorName",
+        "isRead"
+      )
+      .join("users", "users.id", "notifications.actorId")
+      .join("articles", "articles.authorId", "notifications.subjectId")
+      .where({ subjectId: userId })
+      .andWhere({ isRead: false });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findNotificationById(id, type) {
   let notification;
   try {
@@ -67,4 +90,4 @@ async function findNotificationById(id, type) {
   }
 }
 
-module.exports = { addNotification, updateNotification };
+module.exports = { addNotification, updateNotification, getUserNotifications };
