@@ -11,12 +11,23 @@ router.post("/", authenticate, async (req, res, next) => {
     const response = service.addNotification(notification);
     if (response) {
       if (response.subjectId === userId) {
-        pusher.trigger("notifications-channel", "new-notification", {
+        pusher.trigger(`$notifications-channel-${userId}`, "new-notification", {
           response
         });
       }
     }
     return res.status(201).json({ message: "Added successfully" });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.get("/", authenticate, async (req, res, next) => {
+  const userId = req.user.subject;
+  try {
+    const response = service.getUserNotifications(userId);
+    return res.status(201).json(response);
   } catch (error) {
     console.log(error);
     next(error);

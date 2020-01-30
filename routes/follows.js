@@ -18,7 +18,7 @@ router.post("/", authenticate, async (req, res, next) => {
       new_notification
     );
     if (response && notification.subjectId === userId) {
-      pusher.trigger("notifications-channel", "new-notification", {
+      pusher.trigger(`notifications-channel-${userId}`, "new-notification", {
         notification
       });
     }
