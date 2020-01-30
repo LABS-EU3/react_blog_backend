@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authenticate } = require("./utils/loggedIn");
 const service = require("../services/notifications");
-const pusher = require("./utils/pusherConfig");
+// const pusher = require("./utils/pusherConfig");
 
 // router.post("/", authenticate, async (req, res, next) => {
 //   const notification = req.body;
