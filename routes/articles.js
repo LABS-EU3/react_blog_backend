@@ -181,7 +181,7 @@ router.get("/:articleId", async (req, res, next) => {
   try {
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const { articleId } = req.params;
-    const result = await service.getArticleInfo(articleId);
+    const result = await service.getArticleInfo({articleId});
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);

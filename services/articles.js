@@ -110,25 +110,26 @@ async function uploadFile(image) {
   }
 }
 
-async function getArticleInfo(userId, articleId, reactorId, authorId) {
+async function getArticleInfo(data) {
   try {
-    const article = await articles.getArticlesById(articleId);
+    const article = await articles.getArticlesById(data.articleId);
+    console.log(data.articleId)
     const tags = await articles.getArticleTags(article.id);
-    const like = await articles.getIfUserLikesArticle(userId, articleId);
-    const reaction = await reactions.getReactions(reactorId, authorId);
+    const like = await articles.getIfUserLikesArticle(data.userId, data.articleId);
+    const reaction = await reactions.getReactions(data.reactorId, data.authorId);
     const response = { ...article, tags, like, reaction };
     if (!article) {
       return {
         statusCode: 404,
-        data: { message: `Cannot find article id of ${articleId}. ` }
+        data: { message: `Cannot find article id of ${data.articleId}. ` }
       };
     } else {
-      if (userId && articleId)
+      if (data.userId && data.articleId)
         return {
-          message: `User has already liked article of id ${articleId}`
+          message: `User has already liked article of id ${data.articleId}`
         }
-      if (reactorId && authorId)
-        return { message: `User has reacted to article of id ${articleId}` }
+      if (data.reactorId && data.authorId)
+        return { message: `User has reacted to article of id ${data.articleId}` }
       return { statusCode: 200, data: { response } };
     }
   } catch (err) {
@@ -165,7 +166,5 @@ module.exports = {
   getArticleLikeCount,
   addNewCover,
   checkIfArticleExistsToSave,
-  updateArticle,
-  getAllTags,
-  addNewCover
+  updateArticle
 };

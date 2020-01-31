@@ -343,7 +343,7 @@ module.exports = {
   getArticleTags,
   getArticlesById,
   addCover,
-  updateArticle,
-  findAllTags,
-  addCover
+  updateArticle
+  // findAllTags,
+  // addCover
 };
