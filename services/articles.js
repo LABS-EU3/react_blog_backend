@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const articles = require("../data/models/article-model");
+const reactions = require("../data/models/reactions-model");
 const config = require("../config");
 const sharp = require("sharp");
 
@@ -119,7 +120,7 @@ async function getArticleInfo(userId, articleId, reactorId, authorId) {
     const article = await articles.getArticlesById(articleId);
     const tags = await articles.getArticleTags(article.id);
     const like = await articles.getIfUserLikesArticle(userId, articleId);
-    const reaction = await articles.getReactionByUser(reactorId, authorId);
+    const reaction = await reactions.getReactions(reactorId, authorId);
     const response = { ...article, tags, like, reaction };
     if (!article) {
       return {
