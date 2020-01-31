@@ -1,5 +1,6 @@
-// const request = require("supertest");
-// const server = require("../../app");
+const request = require("supertest");
+const server = require("../../app");
+const { generateToken } = require("../utils/generateToken");
 // const db = require("../../data/dbConfig");
 
 // beforeAll(async () => {
@@ -31,10 +32,19 @@
 
 // })
 describe("server", () => {
-    describe("[GET] / endpoint", () => {
-      test("the db env is testing", () => {
-        expect(process.env.DB_ENV).toBe("testing");
-      });
+  describe("[GET] / endpoint", () => {
+    test("the db env is testing", () => {
+      expect(process.env.DB_ENV).toBe("testing");
     });
   });
-
+  describe("[DELETE] /api/interests", () => {
+    test("Should return 404 if user does not have given interests", async () => {
+      const dummyToken = generateToken({ id: 1, username: "Megan" });
+      const response = await request(server)
+        .delete("/api/interests")
+        .set("Authorization", dummyToken)
+        .send(["Tech"]);
+      expect(response.status).not.toBe(200);
+    });
+  });
+});

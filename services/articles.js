@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const articles = require("../data/models/article-model");
+const reactions = require("../data/models/reactions-model");
 const config = require("../config");
 const sharp = require("sharp");
 
@@ -85,17 +86,16 @@ async function addTag(tag, id) {
   return response;
 }
 
-async function getAllTags() {
-  const response = await articles.findAllTags();
-  return response;
-}
-
 async function uploadFile(image) {
   try {
     const fileContent = fs.readFileSync(image.path);
     let compressedImage = sharp(fileContent)
       .jpeg({ quality: 50 })
+<<<<<<< HEAD
       .png({ quality: 50 });
+=======
+      .png({ quality: 50 })
+>>>>>>> fd25e6ac0a6aef245d5fa2be4a63f6d1e230eb37
 
     const params = {
       Bucket: "getinsightly",
@@ -104,7 +104,7 @@ async function uploadFile(image) {
     };
 
     const url = new Promise(resolve => {
-      s3.upload(params, function(err, data) {
+      s3.upload(params, function (err, data) {
         if (err) {
           throw err;
         }
@@ -118,17 +118,26 @@ async function uploadFile(image) {
   }
 }
 
-async function getArticleInfo(articleId) {
+async function getArticleInfo(data) {
   try {
-    const article = await articles.getArticlesById(articleId);
+    const article = await articles.getArticlesById(data.articleId);
+    console.log(data.articleId)
     const tags = await articles.getArticleTags(article.id);
-    const response = { ...article, tags };
+    const like = await articles.getIfUserLikesArticle(data.userId, data.articleId);
+    const reaction = await reactions.getReactions(data.reactorId, data.authorId);
+    const response = { ...article, tags, like, reaction };
     if (!article) {
       return {
         statusCode: 404,
-        data: { message: `Cannot find article id of ${articleId}. ` }
+        data: { message: `Cannot find article id of ${data.articleId}. ` }
       };
     } else {
+      if (data.userId && data.articleId)
+        return {
+          message: `User has already liked article of id ${data.articleId}`
+        }
+      if (data.reactorId && data.authorId)
+        return { message: `User has reacted to article of id ${data.articleId}` }
       return { statusCode: 200, data: { response } };
     }
   } catch (err) {
@@ -165,7 +174,11 @@ module.exports = {
   getArticleLikeCount,
   addNewCover,
   checkIfArticleExistsToSave,
+<<<<<<< HEAD
   updateArticle,
   getAllTags,
   getArticles
+=======
+  updateArticle
+>>>>>>> fd25e6ac0a6aef245d5fa2be4a63f6d1e230eb37
 };
