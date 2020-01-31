@@ -136,6 +136,24 @@ async function getArticleInfo(userId, articleId, reactorId, authorId) {
   }
 }
 
+async function updateArticle(articleId) {
+  const updatedArticle = await articles.updateArticle(articleId);
+  return updatedArticle;
+}
+
+async function checkIfArticleExistsToSave(articleId) {
+  try {
+    const article = await articles.getArticlesById(articleId);
+    if (!article) {
+      return false;
+    } else {
+      return true;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   likeArticle,
   findArticles,
@@ -145,5 +163,9 @@ module.exports = {
   uploadFile,
   getArticleInfo,
   getArticleLikeCount,
+  addNewCover,
+  checkIfArticleExistsToSave,
+  updateArticle,
+  getAllTags,
   addNewCover
 };
