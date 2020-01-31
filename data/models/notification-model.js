@@ -16,11 +16,16 @@ async function addNotification(notification) {
   }
 }
 
-async function updateNotification(id, notification) {
+async function updateNotification(id) {
   try {
+    const notification = await fetchNotificationToUpdate(id);
+    const notificationToUpdate = {
+      ...notification,
+      isRead: !notification.isRead
+    };
     await db("notifications")
       .where({ id: id })
-      .update(notification);
+      .update(notificationToUpdate);
     const response = await findNotificationById(id);
     return response;
   } catch (error) {
@@ -90,4 +95,20 @@ async function findNotificationById(id, type) {
   }
 }
 
-module.exports = { addNotification, updateNotification, getUserNotifications };
+async function fetchNotificationToUpdate(id) {
+  try {
+    const response = await db("notifications")
+      .where({ id: id })
+      .first();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = {
+  addNotification,
+  updateNotification,
+  getUserNotifications,
+  fetchNotificationToUpdate
+};
