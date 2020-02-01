@@ -18,8 +18,12 @@ router.get("/", async (req, res) => {
     const filtered_articles_result = articles.filter(article =>
       regex.test(article.title)
     );
-    const response = filtered_users_result.concat(filtered_articles_result);
-    return res.status(200).json(response);
+    return res
+      .status(200)
+      .json({
+        insights: filtered_articles_result,
+        people: filtered_users_result
+      });
   } catch (error) {
     res.status(500).json({
       error: error.message
