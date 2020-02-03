@@ -90,7 +90,7 @@ async function uploadFile(image) {
     const fileContent = fs.readFileSync(image.path);
     let compressedImage = sharp(fileContent)
       .jpeg({ quality: 50 })
-      .png({ quality: 50 })
+      .png({ quality: 50 });
 
     const params = {
       Bucket: "getinsightly",
@@ -99,7 +99,7 @@ async function uploadFile(image) {
     };
 
     const url = new Promise(resolve => {
-      s3.upload(params, function (err, data) {
+      s3.upload(params, function(err, data) {
         if (err) {
           throw err;
         }
@@ -117,8 +117,15 @@ async function getArticleInfo(data) {
   try {
     const article = await articles.getArticlesById(data.articleId);
     const tags = await articles.getArticleTags(article.id);
-    const like = await articles.getIfUserLikesArticle(data.userId, data.articleId);
-    const response = { ...article, tags, like };
+    const { count } = await getArticleLikeCount(data.articleId);
+    let response = { ...article, tags, likeCount: count };
+    if (data.userId) {
+      let hasLiked = await articles.checkIfUserHasLiked(
+        data.userId,
+        data.articleId
+      );
+      response = { ...response, hasLiked };
+    }
     if (!article) {
       return {
         statusCode: 404,
@@ -128,9 +135,11 @@ async function getArticleInfo(data) {
       if (data.userId && data.articleId)
         return {
           message: `User has already liked article of id ${data.articleId}`
-        }
+        };
       if (data.reactorId && data.authorId)
-        return { message: `User has reacted to article of id ${data.articleId}` }
+        return {
+          message: `User has reacted to article of id ${data.articleId}`
+        };
       return { statusCode: 200, data: { response } };
     }
   } catch (err) {
@@ -156,7 +165,6 @@ async function getArticleByAuthorId(authorId) {
   }
 }
 
-
 async function updateArticle(articleId) {
   const updatedArticle = await articles.updateArticle(articleId);
   return updatedArticle;
@@ -179,7 +187,6 @@ async function getAllTags() {
   const response = await articles.findAllTags();
   return response;
 }
-
 
 module.exports = {
   likeArticle,

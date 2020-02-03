@@ -23,7 +23,7 @@ async function findAllTags() {
 
 async function getIfUserLikesArticle(userId, articleId) {
   try {
-    let response = []
+    let response = [];
     // let response = await db("articleLikes")
     //   .select(
     //     "userId",
@@ -35,7 +35,20 @@ async function getIfUserLikesArticle(userId, articleId) {
     console.log(error);
   }
 }
-  
+
+async function checkIfUserHasLiked(userId, articleId) {
+  try {
+    let response = await db("articleLikes")
+      .select("userId", "articleId")
+      .where("userId", userId)
+      .andWhere("articleId", articleId)
+      .first();
+    return response.userId ? true : false;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getAllArticles() {
   try {
     const articles = await db("articles as a")
@@ -59,20 +72,15 @@ async function getAllArticles() {
 
 async function getReactionByUser(reactorId, authorId) {
   try {
-      const response = await db("reactions")
-      .select(
-          "reactorId",
-          "authorId",
-          "highlighted_text"
-      )
+    const response = await db("reactions")
+      .select("reactorId", "authorId", "highlighted_text")
       .where("reactorId", reactorId)
-      .andWhere("authorId", authorId)
-      return response;
-  } catch(error) {
-      console.log(error);
+      .andWhere("authorId", authorId);
+    return response;
+  } catch (error) {
+    console.log(error);
   }
 }
-
 
 async function getLikeCountByArticleId(id) {
   try {
@@ -284,7 +292,7 @@ async function findAuthorArticle(authorId) {
   try {
     const article = await db("articles")
       .select()
-      .where({ authorId: authorId })
+      .where({ authorId: authorId });
     return article;
   } catch (error) {
     console.log(error);
@@ -390,5 +398,6 @@ module.exports = {
   findAuthorArticle,
   updateArticle,
   getAllArticles,
-  findAllTags
+  findAllTags,
+  checkIfUserHasLiked
 };
