@@ -5,6 +5,16 @@ async function addNewReaction(reaction) {
     return response;
 }
 
+async function getReactorReactions(data) {
+    try {
+        const response = await reactions.findReactionsByReactorId(data);
+        return response;
+    } catch(err) {
+        console.log(err);
+    }
+}
+
 module.exports = {
-    addNewReaction
+    addNewReaction,
+    getReactorReactions
 }

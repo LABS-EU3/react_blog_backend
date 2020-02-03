@@ -38,4 +38,25 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
+/**
+ * Todo: fix followers endpoint to work
+ */
+
+router.get('/:articleId', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.subject;
+    const article = await articles.getArticlesById(req.params.articleId);
+    const data = {
+      reactorId: userId,
+      articleId: article.id
+    }
+    const response = await service.getReactorReactions(data);
+    return res.status(200).json(response);
+  } catch(error) {
+    res.status(500).json({
+      error: error.message
+    });
+  }
+})
+
 module.exports = router;
