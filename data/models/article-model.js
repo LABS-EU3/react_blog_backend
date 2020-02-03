@@ -23,13 +23,13 @@ async function findAllTags() {
 
 async function getIfUserLikesArticle(userId, articleId) {
   try {
-    let response = await db("articleLikes")
-      .select(
-        "userId",
-        "articleId"
-      )
-      .where("userId", userId)
-      .andWhere("articleId", articleId)
+    let response = []
+    // let response = await db("articleLikes")
+    //   .select(
+    //     "userId",
+    //     "articleId"
+    //   )
+    //   .where({"userId":userId, "articleId": articleId});
     return response;
   } catch (error) {
     console.log(error);
@@ -366,7 +366,6 @@ async function getArticlesById(id) {
     const [{ fullname }] = await db("users")
       .select("fullname")
       .where({ id: article.authorId });
-
     return { ...article, authorName: fullname };
   } catch (error) {
     console.log(error);

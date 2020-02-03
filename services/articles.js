@@ -1,7 +1,6 @@
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const articles = require("../data/models/article-model");
-const reactions = require("../data/models/reactions-model");
 const config = require("../config");
 const sharp = require("sharp");
 
@@ -117,11 +116,9 @@ async function uploadFile(image) {
 async function getArticleInfo(data) {
   try {
     const article = await articles.getArticlesById(data.articleId);
-    console.log(data.articleId)
     const tags = await articles.getArticleTags(article.id);
     const like = await articles.getIfUserLikesArticle(data.userId, data.articleId);
-    const reaction = await reactions.getReactions(data.reactorId, data.authorId);
-    const response = { ...article, tags, like, reaction };
+    const response = { ...article, tags, like };
     if (!article) {
       return {
         statusCode: 404,

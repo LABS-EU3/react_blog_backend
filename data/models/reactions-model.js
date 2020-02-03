@@ -27,7 +27,7 @@ async function getReactions() {
                 'r.reactorId'
             )
             .join('articles as a', 'a.id', 'r.articleId')
-            .join('users as u', 'u.id', 'r.userId')
+            .join('users as u', 'u.id', 'r.reactorId')
             .where('userId','=', 'u.id')    
         return reactions;
     } catch(error) {
@@ -46,11 +46,22 @@ async function findReactionsById(id) {
     }
 }
 
+async function findReactionsByReactorId(data) {
+    try {
+        const reaction = await db("reactions")
+            .where({ reactorId: data.reactorId, articleId: data.articleId  });
+        return reaction;
+    } catch(error) {
+        console.log(error);
+    }
+}
+
 
 
 
 module.exports ={
     addReactions,
     getReactions,
-    findReactionsById
+    findReactionsById,
+    findReactionsByReactorId
 }
