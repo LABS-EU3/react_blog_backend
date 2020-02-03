@@ -2,6 +2,25 @@ const users = require("../data/models/user-model");
 const bcrypt = require("bcryptjs");
 const { generateToken, generateVerificationToken } = require("../routes/utils/generateToken");
 
+
+async function addSubscription(data) {
+  const response = await users.subscribeUser(data);
+  if (response) {
+    return { statusCode: 201, data: { message: 'Subscription successful' } };
+  } else {
+    return { statusCode: 400, data: { message: 'Something went wrong on our end, try again in a sec, while we fix it' } };
+  }
+}
+
+async function removeSubscription(data) {
+  const response = await users.unsubscribeUser(data);
+  if (response) {
+    return { statusCode: 200, data: { message: 'Unsubscribed successful' } };
+  } else {
+    return { statusCode: 400, data: { message: 'Something went wrong on our end, try again in a sec, while we fix it' } };
+  }
+}
+
 async function getUsers() {
   const allUsers = await users.findUsers();
 
@@ -24,8 +43,8 @@ async function getUserInfo(userId) {
       statusCode: 200,
       data: {
         ...user,
-        followers: followers.count || 0,
-        following: following.count || 0,
+        followers: followers.map(follower => follower.followerId),
+        following: following.map(following => following.followingId),
         interests
       }
     };
@@ -66,6 +85,8 @@ module.exports = {
   getUserInfo,
   getUsers,
   editUserInfo,
+  addSubscription,
+  removeSubscription,
   findFollowerCount,
   findFollowingCount
 };

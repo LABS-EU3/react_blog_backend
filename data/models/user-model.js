@@ -11,6 +11,26 @@ async function addNewUser(user) {
   }
 }
 
+async function subscribeUser(data) {
+  try {
+    await db("subscription").insert(data);
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function unsubscribeUser(data) {
+  try {
+    await db('subscription')
+      .where({email: data})
+      .update({status: 0});
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function editUser(userData, id) {
   try {
     const user = await db("users")
@@ -38,7 +58,7 @@ async function findUsers() {
 async function findUserById(id) {
   try {
     const user = await db("users")
-      .select("id", "email", "fullname", "jwt", "avatarUrl", "isVerified")
+      .select("id", "email", "fullname", "jwt", "avatarUrl", "isVerified", "bio")
       .where({ id: id })
       .first();
     return user;
@@ -50,21 +70,18 @@ async function findUserById(id) {
 async function getFollowersCount(userId) {
   try {
     const followers = await db("follows")
-      .count()
-      .where("followingId", userId)
-      .first();
+      .select("followerId")
+      .where("followingId", userId);
     return followers;
   } catch (error) {
     console.log(error);
   }
 }
-
 async function getFollowingCount(userId) {
   try {
     const following = await db("follows")
-      .count()
-      .where("followerId", userId)
-      .first();
+      .select("followingId")
+      .where("followerId", userId);
     return following;
   } catch (error) {
     console.log(error);
@@ -113,6 +130,8 @@ module.exports = {
   findUserById,
   findUsers,
   getBy,
+  subscribeUser,
+  unsubscribeUser,
   getFollowingCount,
   getFollowersCount,
   getInterests

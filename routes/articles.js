@@ -1,6 +1,6 @@
 const express = require("express");
 const service = require("../services/articles");
-const {authenticate} = require("./utils/loggedIn");
+const { authenticate } = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
@@ -37,6 +37,16 @@ router.get("/", authenticate, async (req, res, next) => {
     res.status(articles.statusCode).json(articles.data);
   } catch (error) {
     next(error);
+  }
+});
+
+
+router.get("/tags", async (req, res) => {
+  try {
+    const tags = await service.getAllTags();
+    res.status(200).json(tags);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -103,42 +113,77 @@ router.post("/publish", authenticate, async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.coverImageUrl = "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
+    articleToAdd.coverImageUrl =
+      "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
     }
-    try {
-      const response = await service.addNewArticle(articleToAdd);
-      const { id } = response;
-      for (const tag of tagsToAdd) {
-        const savedTag = await service.addTag(tag["name"], id);
-        responseTags.push(savedTag);
+
+    const isArticlePresent = await service.checkIfArticleExistsToSave(
+      articleToAdd.custom_id
+    );
+    if (!isArticlePresent) {
+      try {
+        const response = await service.addNewArticle(articleToAdd);
+        const { id } = response;
+        if (tagsToAdd.length) {
+          for (const tag of tagsToAdd) {
+            const savedTag = await service.addTag(tag["name"], id);
+            responseTags.push(savedTag);
+          }
+        }
+        return res.status(200).json({ ...response, tags: responseTags });
+      } catch (error) {
+        res.status(500).json({
+          error: error.message
+        });
       }
-      console.log("response", {
-        ...response,
-        tags: responseTags
-      });
-      return res.status(200).json({ ...response, tags: responseTags });
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
+    } else {
+      try {
+        const updatedArticle = service.updateArticle(articleToAdd.custom_id);
+        if (tagsToAdd.length) {
+          for (const tag of tagsToAdd) {
+            const savedTag = await service.addTag(
+              tag["name"],
+              updatedArticle.id
+            );
+            responseTags.push(savedTag);
+          }
+        }
+        return res.status(201).json({ ...updatedArticle, justUpdated: true });
+      } catch (error) {
+        console.log(error);
+      }
     }
   });
 });
 
 router.post("/save", authenticate, async (req, res) => {
   const article = req.body;
-  try {
-    const articleToAdd = _.omit(article, "tags");
-    const response = await service.addNewArticle(articleToAdd);
-    console.log(response);
-    return res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
+  const articleToAdd = _.omit(article, "tags");
+  const isArticlePresent = await service.checkIfArticleExistsToSave(
+    articleToAdd.custom_id
+  );
+  if (!isArticlePresent) {
+    try {
+      const response = await service.addNewArticle(articleToAdd);
+      console.log(response);
+      return res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
+  } else {
+    try {
+      const response = service.updateArticle(articleToAdd.custom_id);
+      return res.status(201).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
   }
 });
 
@@ -146,7 +191,17 @@ router.get("/:articleId", async (req, res, next) => {
   try {
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const { articleId } = req.params;
-    const result = await service.getArticleInfo(articleId);
+    const result = await service.getArticleInfo({articleId});
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/author/:authorId", async (req, res, next) => {
+  try {
+    const { authorId } = req.params;
+    const result = await service.getArticleByAuthorId(authorId);
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);

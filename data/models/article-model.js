@@ -10,6 +10,59 @@ async function addArticleLike(articleLike) {
   }
 }
 
+async function getIfUserLikesArticle(userId, articleId) {
+  try {
+    let response = await db("articleLikes")
+      .select(
+        "userId",
+        "articleId"
+      )
+      .where("userId", userId)
+      .andWhere("articleId", articleId)
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+  
+async function getAllArticles() {
+  try {
+    const articles = await db("articles as a")
+      .select(
+        "a.id",
+        "a.custom_id",
+        "title",
+        "body",
+        "authorId",
+        "u.fullname as author",
+        "createdAt",
+        "updatedAt",
+        "a.coverImageUrl"
+      )
+      .join("users as u", "u.id", "a.authorId");
+    return articles;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getReactionByUser(reactorId, authorId) {
+  try {
+      const response = await db("reactions")
+      .select(
+          "reactorId",
+          "authorId",
+          "highlighted_text"
+      )
+      .where("reactorId", reactorId)
+      .andWhere("authorId", authorId)
+      return response;
+  } catch(error) {
+      console.log(error);
+  }
+}
+
+
 async function getLikeCountByArticleId(id) {
   try {
     let response = await db("articleLikes")
@@ -177,7 +230,9 @@ async function addArticle(article) {
 
 async function deleteArticle(id) {
   try {
-    const response = await db("articles").where({id}).del();
+    const response = await db("articles")
+      .where({ id })
+      .del();
     return response;
   } catch (error) {
     console.log(error);
@@ -214,6 +269,17 @@ async function findCoverById(id) {
 //   }
 // }
 
+async function findAuthorArticle(authorId) {
+  try {
+    const article = await db("articles")
+      .select()
+      .where({ authorId: authorId })
+    return article;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findArticleById(id) {
   try {
     const article = await db("articles")
@@ -233,6 +299,18 @@ async function addTag(tag) {
     const ids = await db("tags").insert(tag, "id");
     const id = ids[0];
     const response = await findTagById(id);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function updateArticle(id, post) {
+  try {
+    await db("articles")
+      .where({ custom_id: id })
+      .update(post);
+    const response = await getArticlesById(id);
     return response;
   } catch (error) {
     console.log(error);
@@ -277,6 +355,7 @@ async function getArticlesById(id) {
     const [{ fullname }] = await db("users")
       .select("fullname")
       .where({ id: article.authorId });
+
     return { ...article, authorName: fullname };
   } catch (error) {
     console.log(error);
@@ -285,6 +364,8 @@ async function getArticlesById(id) {
 
 module.exports = {
   addArticleLike,
+  getIfUserLikesArticle,
+  getReactionByUser,
   getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
@@ -295,5 +376,8 @@ module.exports = {
   addTag,
   getArticleTags,
   getArticlesById,
-  addCover
+  addCover,
+  findAuthorArticle,
+  updateArticle,
+  getAllArticles,
 };
