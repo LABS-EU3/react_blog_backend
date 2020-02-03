@@ -10,6 +10,32 @@ async function addArticleLike(articleLike) {
   }
 }
 
+async function findAllTags() {
+  try {
+    const tags = await db("tags")
+      .select("name", "id", "articleId")
+      .distinct();
+    return tags;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getIfUserLikesArticle(userId, articleId) {
+  try {
+    let response = []
+    // let response = await db("articleLikes")
+    //   .select(
+    //     "userId",
+    //     "articleId"
+    //   )
+    //   .where({"userId":userId, "articleId": articleId});
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+  
 async function getAllArticles() {
   try {
     const articles = await db("articles as a")
@@ -30,6 +56,23 @@ async function getAllArticles() {
     console.log(error);
   }
 }
+
+async function getReactionByUser(reactorId, authorId) {
+  try {
+      const response = await db("reactions")
+      .select(
+          "reactorId",
+          "authorId",
+          "highlighted_text"
+      )
+      .where("reactorId", reactorId)
+      .andWhere("authorId", authorId)
+      return response;
+  } catch(error) {
+      console.log(error);
+  }
+}
+
 
 async function getLikeCountByArticleId(id) {
   try {
@@ -237,6 +280,17 @@ async function findCoverById(id) {
 //   }
 // }
 
+async function findAuthorArticle(authorId) {
+  try {
+    const article = await db("articles")
+      .select()
+      .where({ authorId: authorId })
+    return article;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findArticleById(id) {
   try {
     const article = await db("articles")
@@ -318,19 +372,10 @@ async function getArticlesById(id) {
   }
 }
 
-async function findAllTags() {
-  try {
-    const tags = await db("tags")
-      .select("name", "id", "articleId")
-      .distinct();
-    return tags;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 module.exports = {
   addArticleLike,
+  getIfUserLikesArticle,
+  getReactionByUser,
   getLikeCountByArticleId,
   getFollowingArticles,
   getArticlesByUserInterests,
@@ -342,7 +387,8 @@ module.exports = {
   getArticleTags,
   getArticlesById,
   addCover,
+  findAuthorArticle,
   updateArticle,
-  findAllTags,
-  getAllArticles
+  getAllArticles,
+  findAllTags
 };

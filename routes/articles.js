@@ -40,15 +40,15 @@ router.get("/", authenticate, async (req, res, next) => {
   }
 });
 
+
 router.get("/tags", async (req, res) => {
   try {
     const tags = await service.getAllTags();
-    res.status(200).json(tags)
+    res.status(200).json(tags);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  catch(error) {
-    res.status(500).json({error: error.message})
-  }
-})
+});
 
 // router.post("/uploadCover", async (req, res) => {
 //   let form = new formidable.IncomingForm();
@@ -191,7 +191,17 @@ router.get("/:articleId", async (req, res, next) => {
   try {
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const { articleId } = req.params;
-    const result = await service.getArticleInfo(articleId);
+    const result = await service.getArticleInfo({articleId});
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/author/:authorId", async (req, res, next) => {
+  try {
+    const { authorId } = req.params;
+    const result = await service.getArticleByAuthorId(authorId);
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);

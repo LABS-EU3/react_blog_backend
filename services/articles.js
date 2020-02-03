@@ -85,17 +85,12 @@ async function addTag(tag, id) {
   return response;
 }
 
-async function getAllTags() {
-  const response = await articles.findAllTags();
-  return response;
-}
-
 async function uploadFile(image) {
   try {
     const fileContent = fs.readFileSync(image.path);
     let compressedImage = sharp(fileContent)
       .jpeg({ quality: 50 })
-      .png({ quality: 50 });
+      .png({ quality: 50 })
 
     const params = {
       Bucket: "getinsightly",
@@ -104,7 +99,7 @@ async function uploadFile(image) {
     };
 
     const url = new Promise(resolve => {
-      s3.upload(params, function(err, data) {
+      s3.upload(params, function (err, data) {
         if (err) {
           throw err;
         }
@@ -118,23 +113,49 @@ async function uploadFile(image) {
   }
 }
 
-async function getArticleInfo(articleId) {
+async function getArticleInfo(data) {
   try {
-    const article = await articles.getArticlesById(articleId);
+    const article = await articles.getArticlesById(data.articleId);
     const tags = await articles.getArticleTags(article.id);
-    const response = { ...article, tags };
+    const like = await articles.getIfUserLikesArticle(data.userId, data.articleId);
+    const response = { ...article, tags, like };
     if (!article) {
       return {
         statusCode: 404,
-        data: { message: `Cannot find article id of ${articleId}. ` }
+        data: { message: `Cannot find article id of ${data.articleId}. ` }
       };
     } else {
+      if (data.userId && data.articleId)
+        return {
+          message: `User has already liked article of id ${data.articleId}`
+        }
+      if (data.reactorId && data.authorId)
+        return { message: `User has reacted to article of id ${data.articleId}` }
       return { statusCode: 200, data: { response } };
     }
   } catch (err) {
     console.log(err);
   }
 }
+
+async function getArticleByAuthorId(authorId) {
+  try {
+    const response = await articles.findAuthorArticle(authorId);
+    // const articles = { articles };
+
+    if (!response) {
+      return {
+        statusCode: 404,
+        data: { message: `Cannot find articles with authorid of ${authorId} ` }
+      };
+    } else {
+      return { statusCode: 200, data: response };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 
 async function updateArticle(articleId) {
   const updatedArticle = await articles.updateArticle(articleId);
@@ -154,6 +175,12 @@ async function checkIfArticleExistsToSave(articleId) {
   }
 }
 
+async function getAllTags() {
+  const response = await articles.findAllTags();
+  return response;
+}
+
+
 module.exports = {
   likeArticle,
   findArticles,
@@ -164,8 +191,9 @@ module.exports = {
   getArticleInfo,
   getArticleLikeCount,
   addNewCover,
+  getArticleByAuthorId,
   checkIfArticleExistsToSave,
   updateArticle,
-  getAllTags,
-  getArticles
+  getArticles,
+  getAllTags
 };

@@ -2,8 +2,7 @@ const db = require("../dbConfig");
 
 async function addNewFollower(follow) {
     try {
-        const [id] = await db("follows").insert(follow, "id");
-        const response = await findUserByFollow(id)
+        const response = await db("follows").insert(follow)
         return response;
     } catch (error) {
         console.log(error)
