@@ -37,6 +37,25 @@ async function findInterests() {
     const interests = await db("interests").select("id", "name", "userId");
     return interests;
   } catch (error) {
+    console.log(error)
+  }
+}
+
+async function findUsersByInterestNames(interests) {
+  try {
+    const users = await db("interests as i")
+      .select(
+        "u.id",
+        "u.fullname",
+        "u.bio",
+        "u.avatarUrl",
+        "i.name as mutualInterest"
+      )
+      .join("users as u", "u.id", "i.userId")
+      .whereIn("i.name", interests)
+      .distinct();
+    return users;
+  } catch (error) {
     console.log(error);
   }
 }
@@ -58,5 +77,6 @@ module.exports = {
   addUserInterests,
   findUsersByInterest,
   deleteUserInterests,
-  findInterestsByUserId
+  findInterestsByUserId,
+  findUsersByInterestNames
 };

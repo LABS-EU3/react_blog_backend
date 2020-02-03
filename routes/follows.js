@@ -1,7 +1,6 @@
 const express = require("express");
-
+const { authenticate } = require("./utils/loggedIn");
 const service = require("../services/follows");
-
 const router = express.Router();
 
 router.post("/", async (req, res, next) => {
@@ -12,6 +11,17 @@ router.post("/", async (req, res, next) => {
         return response;
     } catch (error){
         next(error)
+    }
+})
+
+router.get("/potential", authenticate, async (req, res, next) => {
+    const userId = req.user.subject;
+    try {
+        const response = await service.getUsersToFollow(userId);
+        res.status(200).json(response.slice(0,10))
+    }
+    catch(error) {
+        next(error);
     }
 })
 
