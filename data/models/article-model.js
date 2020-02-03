@@ -10,6 +10,17 @@ async function addArticleLike(articleLike) {
   }
 }
 
+async function findAllTags() {
+  try {
+    const tags = await db("tags")
+      .select("name", "id", "articleId")
+      .distinct();
+    return tags;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getIfUserLikesArticle(userId, articleId) {
   try {
     let response = await db("articleLikes")
@@ -380,4 +391,5 @@ module.exports = {
   findAuthorArticle,
   updateArticle,
   getAllArticles,
+  findAllTags
 };

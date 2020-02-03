@@ -178,6 +178,11 @@ async function checkIfArticleExistsToSave(articleId) {
   }
 }
 
+async function getAllTags() {
+  const response = await articles.findAllTags();
+  return response;
+}
+
 
 module.exports = {
   likeArticle,
@@ -192,5 +197,6 @@ module.exports = {
   getArticleByAuthorId,
   checkIfArticleExistsToSave,
   updateArticle,
-  getArticles
+  getArticles,
+  getAllTags
 };
