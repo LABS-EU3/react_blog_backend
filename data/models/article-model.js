@@ -379,7 +379,5 @@ module.exports = {
   addCover,
   findAuthorArticle,
   updateArticle,
-  // findAllTags,
-  // addCover
-  getAllArticles
+  getAllArticles,
 };
