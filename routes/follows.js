@@ -3,16 +3,21 @@ const { authenticate } = require("./utils/loggedIn");
 const service = require("../services/follows");
 const router = express.Router();
 
-router.post("/", async (req, res, next) => {
-    const newFollow = {...req.body};
-    try {
-        const response = await service.addFollower(newFollow)
-        res.status(201).json({message: "New follower added", response})
-        return response;
-    } catch (error){
-        next(error)
-    }
-})
+router.post("/", authenticate, async (req, res, next) => {
+  const newFollowIds = req.body;
+  try {
+    const userId = req.user.subject;
+    Promise.all(
+      newFollowIds.map(id => {
+        service.addFollower({ followerId: userId, followingId: id });
+      })
+    )
+      .then(() => res.status(201).json({ message: "New followers added" }))
+      .catch(err => console.log(err));
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/potential", authenticate, async (req, res, next) => {
     const userId = req.user.subject;
