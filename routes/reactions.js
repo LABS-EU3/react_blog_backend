@@ -5,13 +5,24 @@ const { authenticate } = require("./utils/loggedIn");
 const _ = require("lodash");
 const pusher = require("./utils/pusherConfig");
 const router = express.Router();
+const articles = require("../data/models/article-model");
 
 router.post("/", authenticate, async (req, res) => {
   const incoming = req.body;
-  const new_notification = req.body.notification;
+  const article = await articles.getArticlesById(req.body.articleId)
+  const new_notification = {
+    type: 'reactions',
+    content: req.body.highlighted_text,
+    isRead: false,
+    actorId: req.user.subject,
+    subjectId: article.authorId,
+  };
   const reaction = _.omit(incoming, "notification");
   const userId = req.user.subject;
   try {
+    reaction.articleId = article.id;
+    reaction.authorId = article.authorId;
+    reaction.reactorId = req.user.subject;
     const response = await service.addNewReaction(reaction);
     const notification = await notification_service.addNotification(
       new_notification
