@@ -70,21 +70,18 @@ async function findUserById(id) {
 async function getFollowersCount(userId) {
   try {
     const followers = await db("follows")
-      .count()
-      .where("followingId", userId)
-      .first();
+      .select("followerId")
+      .where("followingId", userId);
     return followers;
   } catch (error) {
     console.log(error);
   }
 }
-
 async function getFollowingCount(userId) {
   try {
     const following = await db("follows")
-      .count()
-      .where("followerId", userId)
-      .first();
+      .select("followingId")
+      .where("followerId", userId);
     return following;
   } catch (error) {
     console.log(error);

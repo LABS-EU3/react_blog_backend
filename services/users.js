@@ -43,8 +43,8 @@ async function getUserInfo(userId) {
       statusCode: 200,
       data: {
         ...user,
-        followers: followers.count || 0,
-        following: following.count || 0,
+        followers: followers.map(follower => follower.followerId),
+        following: following.map(following => following.followingId),
         interests
       }
     };
