@@ -10,6 +10,7 @@ const articles = require("../data/models/article-model");
 router.post("/", authenticate, async (req, res) => {
   const incoming = req.body;
   const article = await articles.getArticlesById(req.body.articleId)
+  console.log(req.body.articleId)
   const new_notification = {
     type: 'reactions',
     content: req.body.highlighted_text,

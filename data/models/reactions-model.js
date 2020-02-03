@@ -27,7 +27,7 @@ async function getReactions() {
                 'r.reactorId'
             )
             .join('articles as a', 'a.id', 'r.articleId')
-            .join('users as u', 'u.id', 'r.userId')
+            .join('users as u', 'u.id', 'r.reactorId')
             .where('userId','=', 'u.id')    
         return reactions;
     } catch(error) {
