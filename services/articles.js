@@ -56,6 +56,11 @@ async function addNewArticle(article) {
   return response;
 }
 
+async function getArticles() {
+  const response = await articles.getAllArticles();
+  return response;
+}
+
 async function removeArticle(id) {
   const response = await articles.deleteArticle(id);
   return response;
@@ -93,7 +98,6 @@ async function uploadFile(image) {
       Key: image.name, // File name you want to save as in S3
       Body: compressedImage
     };
-
 
     const url = new Promise(resolve => {
       s3.upload(params, function (err, data) {
@@ -188,4 +192,5 @@ module.exports = {
   getArticleByAuthorId,
   checkIfArticleExistsToSave,
   updateArticle,
-}
+  getArticles
+};

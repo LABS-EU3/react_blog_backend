@@ -24,6 +24,27 @@ async function getIfUserLikesArticle(userId, articleId) {
     console.log(error);
   }
 }
+  
+async function getAllArticles() {
+  try {
+    const articles = await db("articles as a")
+      .select(
+        "a.id",
+        "a.custom_id",
+        "title",
+        "body",
+        "authorId",
+        "u.fullname as author",
+        "createdAt",
+        "updatedAt",
+        "a.coverImageUrl"
+      )
+      .join("users as u", "u.id", "a.authorId");
+    return articles;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function getReactionByUser(reactorId, authorId) {
   try {
@@ -209,7 +230,9 @@ async function addArticle(article) {
 
 async function deleteArticle(id) {
   try {
-    const response = await db("articles").where({id}).del();
+    const response = await db("articles")
+      .where({ id })
+      .del();
     return response;
   } catch (error) {
     console.log(error);
@@ -355,7 +378,8 @@ module.exports = {
   getArticlesById,
   addCover,
   findAuthorArticle,
-  updateArticle
+  updateArticle,
   // findAllTags,
   // addCover
+  getAllArticles
 };
