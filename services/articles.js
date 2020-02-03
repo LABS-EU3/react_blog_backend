@@ -119,7 +119,7 @@ async function getArticleInfo(data) {
     const tags = await articles.getArticleTags(article.id);
     const { count } = await getArticleLikeCount(data.articleId);
     let response = { ...article, tags, likeCount: count };
-    if (data.userId) {
+    if (data.userId !== null) {
       let hasLiked = await articles.checkIfUserHasLiked(
         data.userId,
         data.articleId
