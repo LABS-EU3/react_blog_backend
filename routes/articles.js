@@ -119,37 +119,71 @@ router.post("/publish", authenticate, async (req, res) => {
     if (result) {
       articleToAdd.coverImageUrl = result;
     }
-    try {
-      const response = await service.addNewArticle(articleToAdd);
-      const { id } = response;
-      for (const tag of tagsToAdd) {
-        const savedTag = await service.addTag(tag["name"], id);
-        responseTags.push(savedTag);
+
+    const isArticlePresent = await service.checkIfArticleExistsToSave(
+      articleToAdd.custom_id
+    );
+    if (!isArticlePresent) {
+      try {
+        const response = await service.addNewArticle(articleToAdd);
+        const { id } = response;
+        if (tagsToAdd.length) {
+          for (const tag of tagsToAdd) {
+            const savedTag = await service.addTag(tag["name"], id);
+            responseTags.push(savedTag);
+          }
+        }
+        return res.status(200).json({ ...response, tags: responseTags });
+      } catch (error) {
+        res.status(500).json({
+          error: error.message
+        });
       }
-      console.log("response", {
-        ...response,
-        tags: responseTags
-      });
-      return res.status(200).json({ ...response, tags: responseTags });
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
+    } else {
+      try {
+        const updatedArticle = service.updateArticle(articleToAdd.custom_id);
+        if (tagsToAdd.length) {
+          for (const tag of tagsToAdd) {
+            const savedTag = await service.addTag(
+              tag["name"],
+              updatedArticle.id
+            );
+            responseTags.push(savedTag);
+          }
+        }
+        return res.status(201).json({ ...updatedArticle, justUpdated: true });
+      } catch (error) {
+        console.log(error);
+      }
     }
   });
 });
 
 router.post("/save", authenticate, async (req, res) => {
   const article = req.body;
-  try {
-    const articleToAdd = _.omit(article, "tags");
-    const response = await service.addNewArticle(articleToAdd);
-    console.log(response);
-    return res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
+  const articleToAdd = _.omit(article, "tags");
+  const isArticlePresent = await service.checkIfArticleExistsToSave(
+    articleToAdd.custom_id
+  );
+  if (!isArticlePresent) {
+    try {
+      const response = await service.addNewArticle(articleToAdd);
+      console.log(response);
+      return res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
+  } else {
+    try {
+      const response = service.updateArticle(articleToAdd.custom_id);
+      return res.status(201).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
   }
 });
 
@@ -157,7 +191,7 @@ router.get("/:articleId", async (req, res, next) => {
   try {
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const { articleId } = req.params;
-    const result = await service.getArticleInfo(articleId);
+    const result = await service.getArticleInfo({articleId});
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);

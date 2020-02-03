@@ -1,4 +1,4 @@
-exports.up = function(knex) {
+exports.up = function (knex) {
   return knex.schema.createTable("articleLikes", table => {
     table.increments();
     table
@@ -17,9 +17,11 @@ exports.up = function(knex) {
       .inTable("users")
       .onUpdate("CASCADE")
       .onDelete("CASCADE");
+    table
+      .unique(["articleId","userId"]);
   });
 };
 
-exports.down = function(knex) {
-    return knex.schema.dropTableIfExists("articleLikes");
+exports.down = function (knex) {
+  return knex.schema.dropTableIfExists("articleLikes");
 };
