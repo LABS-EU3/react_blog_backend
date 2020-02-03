@@ -80,11 +80,6 @@ async function addTag(tag, id) {
   return response;
 }
 
-async function getAllTags() {
-  const response = await articles.findAllTags();
-  return response;
-}
-
 async function uploadFile(image) {
   try {
     const fileContent = fs.readFileSync(image.path);
@@ -98,8 +93,9 @@ async function uploadFile(image) {
       Body: compressedImage
     };
 
+
     const url = new Promise(resolve => {
-      s3.upload(params, function(err, data) {
+      s3.upload(params, function (err, data) {
         if (err) {
           throw err;
         }
@@ -131,6 +127,25 @@ async function getArticleInfo(articleId) {
   }
 }
 
+async function getArticleByAuthorId(authorId) {
+  try {
+    const response = await articles.findAuthorArticle(authorId);
+    // const articles = { articles };
+
+    if (!response) {
+      return {
+        statusCode: 404,
+        data: { message: `Cannot find articles with authorid of ${authorId} ` }
+      };
+    } else {
+      return { statusCode: 200, data: response };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+
 module.exports = {
   likeArticle,
   findArticles,
@@ -141,5 +156,7 @@ module.exports = {
   getArticleInfo,
   getArticleLikeCount,
   addNewCover,
-  getAllTags
+  getArticleByAuthorId,
+  getAllTags,
+  addNewCover
 };

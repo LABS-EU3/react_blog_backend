@@ -1,6 +1,6 @@
 const express = require("express");
 const service = require("../services/articles");
-const {authenticate} = require("./utils/loggedIn");
+const { authenticate } = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
@@ -40,15 +40,15 @@ router.get("/", authenticate, async (req, res, next) => {
   }
 });
 
+
 router.get("/tags", async (req, res) => {
   try {
     const tags = await service.getAllTags();
-    res.status(200).json(tags)
+    res.status(200).json(tags);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  catch(error) {
-    res.status(500).json({error: error.message})
-  }
-})
+});
 
 // router.post("/uploadCover", async (req, res) => {
 //   let form = new formidable.IncomingForm();
@@ -113,7 +113,8 @@ router.post("/publish", authenticate, async (req, res) => {
     const article = Object.assign({}, fields);
     const tagsToAdd = JSON.parse(article.tags);
     let articleToAdd = _.omit(article, ["tags", "image"]);
-    articleToAdd.coverImageUrl = "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
+    articleToAdd.coverImageUrl =
+      "https://getinsightly.s3-us-west-2.amazonaws.com/placeholder-1-1100x617.png";
     const responseTags = [];
     if (result) {
       articleToAdd.coverImageUrl = result;
@@ -157,6 +158,16 @@ router.get("/:articleId", async (req, res, next) => {
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const { articleId } = req.params;
     const result = await service.getArticleInfo(articleId);
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/author/:authorId", async (req, res, next) => {
+  try {
+    const { authorId } = req.params;
+    const result = await service.getArticleByAuthorId(authorId);
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);

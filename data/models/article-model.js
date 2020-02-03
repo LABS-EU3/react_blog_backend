@@ -214,6 +214,17 @@ async function findCoverById(id) {
 //   }
 // }
 
+async function findAuthorArticle(authorId) {
+  try {
+    const article = await db("articles")
+      .select()
+      .where({ authorId: authorId })
+    return article;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function findArticleById(id) {
   try {
     const article = await db("articles")
@@ -283,17 +294,6 @@ async function getArticlesById(id) {
   }
 }
 
-async function findAllTags() {
-  try {
-    const tags = await db("tags")
-      .select("name", "id", "articleId")
-      .distinct();
-    return tags;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 module.exports = {
   addArticleLike,
   getLikeCountByArticleId,
@@ -307,5 +307,7 @@ module.exports = {
   getArticleTags,
   getArticlesById,
   addCover,
-  findAllTags
+  findAuthorArticle,
+  findAllTags,
+  addCover
 };
