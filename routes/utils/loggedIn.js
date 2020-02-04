@@ -23,14 +23,18 @@ function authenticate(req, res, next) {
 }
 
 function decode(token) {
-  const user = jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      console.log(err);
-    }
-
-    return decoded;
-  });
-  return user;
+  if (token) {
+    const user = jwt.verify(token, JWT_SECRET, (err, decoded) => {
+      if (err) {
+        console.log(err);
+      }
+  
+      return decoded;
+    });
+    return user;
+  }
+  return true
+  
 }
 
 module.exports = {
