@@ -190,8 +190,10 @@ router.post("/save", authenticate, async (req, res) => {
 router.get("/:articleId", async (req, res, next) => {
   try {
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
+    const userId = req.user && req.user.subject ? req.user.subject : null;
     const { articleId } = req.params;
-    const result = await service.getArticleInfo({articleId});
+    const data = { articleId, userId }
+    const result = await service.getArticleInfo(data);
     res.status(result.statusCode).json(result.data);
   } catch (err) {
     next(err);
