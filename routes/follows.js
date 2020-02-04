@@ -8,7 +8,13 @@ const router = express.Router();
 
 router.post("/", authenticate, async (req, res, next) => {
   const incoming = { ...req.body };
-  const new_notification = req.body.notification;
+  const new_notification = {
+    type: 'reactions',
+    content: req.body.highlighted_text,
+    isRead: false,
+    actorId: req.body.reactorId,
+    subjectId: req.body.authorId,
+  };
   const newFollow = _.omit(incoming, "notification");
   const userId = req.user.subject;
 
