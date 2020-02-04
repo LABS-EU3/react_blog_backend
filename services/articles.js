@@ -122,15 +122,12 @@ async function getArticleInfo(data) {
     
     let response = { ...article, tags, likeCount: articleInfo.count };
     if (data.userId) {
-      // const hasLiked = articleInfo.find(item => item.userId === data.userId);
-      // response = { ...response, hasLiked };
       let hasLiked = await articles.checkIfUserHasLiked(
         data.userId,
         article.id
       );
       response.hasLiked = hasLiked;
     }
-    console.log(response);
     if (!article) {
       return {
         statusCode: 404,
