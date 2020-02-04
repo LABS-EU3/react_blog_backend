@@ -1,6 +1,6 @@
 const express = require("express");
 const service = require("../services/articles");
-const { authenticate } = require("./utils/loggedIn");
+const { authenticate, decode } = require("./utils/loggedIn");
 const _ = require("lodash");
 const formidable = require("formidable");
 
@@ -189,8 +189,10 @@ router.post("/save", authenticate, async (req, res) => {
 
 router.get("/:articleId", async (req, res, next) => {
   try {
+    const token = req.headers.authorization;
+    const decoder = decode(token);
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
-    const userId = req.user && req.user.subject ? req.user.subject : null;
+    const userId = decoder.subject ? decoder.subject : null;
     const { articleId } = req.params;
     const data = { articleId, userId }
     const result = await service.getArticleInfo(data);
