@@ -38,12 +38,15 @@ async function getIfUserLikesArticle(userId, articleId) {
 
 async function checkIfUserHasLiked(userId, articleId) {
   try {
-    let response = await db("articleLikes")
-      .select("userId", "articleId")
-      .where("userId", userId)
-      .andWhere("articleId", articleId)
-      .first();
-    return response.userId ? true : false;
+    if(userId) {
+      let response = await db("articleLikes")
+        .select("userId", "articleId")
+        .where("userId", userId)
+        .andWhere("articleId", articleId)
+        .first();
+      return response && response.userId ? true : false;
+    }
+    return false
   } catch (error) {
     console.log(error);
   }
