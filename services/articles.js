@@ -117,14 +117,16 @@ async function getArticleInfo(data) {
   try {
     const article = await articles.getArticlesById(data.articleId);
     const tags = await articles.getArticleTags(article.id);
-    const { count } = await getArticleLikeCount(article.id);
-    let response = { ...article, tags, likeCount: count };
-    if (data.userId !== null) {
+    const articleInfo = await getArticleLikeCount(article.id);
+    
+    
+    let response = { ...article, tags, likeCount: articleInfo.count };
+    if (data.userId) {
       let hasLiked = await articles.checkIfUserHasLiked(
         data.userId,
-        data.articleId
+        article.id
       );
-      response = { ...response, hasLiked };
+      response.hasLiked = hasLiked;
     }
     if (!article) {
       return {
@@ -132,16 +134,9 @@ async function getArticleInfo(data) {
         data: { message: `Cannot find article id of ${data.articleId}. ` }
       };
     } else {
-      if (data.userId && data.articleId)
-        return {
-          message: `User has already liked article of id ${data.articleId}`
-        };
-      if (data.reactorId && data.authorId)
-        return {
-          message: `User has reacted to article of id ${data.articleId}`
-        };
       return { statusCode: 200, data: { response } };
     }
+    
   } catch (err) {
     console.log(err);
   }
