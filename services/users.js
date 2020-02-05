@@ -1,7 +1,5 @@
 const users = require("../data/models/user-model");
-const bcrypt = require("bcryptjs");
-const { generateToken, generateVerificationToken } = require("../routes/utils/generateToken");
-
+const _ = require("lodash");
 
 async function addSubscription(data) {
   const response = await users.subscribeUser(data);
@@ -28,6 +26,16 @@ async function getUsers() {
     return { statusCode: 404, data: { message: "Users not found." } };
   } else {
     return { statusCode: 200, data: { data: allUsers } };
+  }
+}
+
+async function getBasic(id) {
+  try {
+    const user = await users.getBasic(id);
+    const info = _.omit(user, ["password"])
+    return info;
+  } catch(err) {
+    console.log(err);
   }
 }
 
@@ -88,5 +96,6 @@ module.exports = {
   addSubscription,
   removeSubscription,
   findFollowerCount,
-  findFollowingCount
+  findFollowingCount,
+  getBasic
 };

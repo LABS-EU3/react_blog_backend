@@ -31,6 +31,17 @@ async function unsubscribeUser(data) {
   }
 }
 
+async function getBasic(id) {
+  try {
+    const user = await db('users')
+      .where({id: id})
+      .first();
+    return user;
+  } catch(err) {
+    console.log(err)
+  }
+}
+
 async function editUser(userData, id) {
   try {
     const user = await db("users")
@@ -134,5 +145,6 @@ module.exports = {
   unsubscribeUser,
   getFollowingCount,
   getFollowersCount,
-  getInterests
+  getInterests,
+  getBasic
 };

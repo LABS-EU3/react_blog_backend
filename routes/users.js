@@ -1,6 +1,7 @@
 const express = require("express");
 const service = require("../services/users");
 const { uploadFile } = require("../services/articles");
+const {decode, authenticate} = require('./utils/loggedIn');
 const formidable = require("formidable");
 const router = express.Router();
 
@@ -33,7 +34,18 @@ router.post('/unsubscribe', async (req, res, next) => {
   }
 })
 
-router.get("/:userId", async (req, res, next) => {
+router.get('/basic', async (req, res, next) => {
+  try {
+    const token = decode(req.headers.authorization);
+    const user = await service.getBasic(token.subject);
+    console.log('hooo');
+    res.status(200).json(user);
+  } catch (err) {
+    next(err);
+  }
+})
+
+router.get("/:userId", authenticate, async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await service.getUserInfo(userId);
@@ -43,7 +55,7 @@ router.get("/:userId", async (req, res, next) => {
   }
 });
 
-router.put("/:userId", async (req, res, next) => {
+router.put("/:userId", authenticate, async (req, res, next) => {
   let form = new formidable.IncomingForm();
   form.parse(req, async function(err, fields, files) {
     let result = "";
