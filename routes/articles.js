@@ -40,7 +40,6 @@ router.get("/", authenticate, async (req, res, next) => {
   }
 });
 
-
 router.get("/tags", async (req, res) => {
   try {
     const tags = await service.getAllTags();
@@ -162,28 +161,14 @@ router.post("/publish", authenticate, async (req, res) => {
 router.post("/save", authenticate, async (req, res) => {
   const article = req.body;
   const articleToAdd = _.omit(article, "tags");
-  const isArticlePresent = await service.checkIfArticleExistsToSave(
-    articleToAdd.custom_id
-  );
-  if (!isArticlePresent) {
-    try {
-      const response = await service.addNewArticle(articleToAdd);
-      console.log(response);
-      return res.status(200).json(response);
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  } else {
-    try {
-      const response = service.updateArticle(articleToAdd.custom_id);
-      return res.status(201).json(response);
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
+  try {
+    const response = await service.addNewArticle(articleToAdd);
+    console.log(response);
+    return res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    });
   }
 });
 
@@ -194,7 +179,7 @@ router.get("/:articleId", async (req, res, next) => {
     // check if userid is sent to by checking token, if yes then we need to add his reactions on that article as part of the response payload
     const userId = decoder.subject ? decoder.subject : null;
     const { articleId } = req.params;
-    const data = { articleId, userId }
+    const data = { articleId, userId };
     const result = await service.getArticleInfo(data);
     res.status(result.statusCode).json(result.data);
   } catch (err) {
