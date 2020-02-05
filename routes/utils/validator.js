@@ -11,7 +11,7 @@ const isEmail = email => {
 };
 
 exports.validateSignupData = async (req, res, next) => {
-  let { fullname, email, password } = req.body;
+  let { fullname, email, password, avatarUrl } = req.body;
   let errors = {};
 
   if (isEmpty(email)) {
@@ -34,7 +34,7 @@ exports.validateSignupData = async (req, res, next) => {
       valid: Object.keys(errors).length === 0 ? true : false
     });
 
-  req.body = { fullname, email, password}
+  req.body = { fullname, email, password, avatarUrl}
   next();
 };
 
