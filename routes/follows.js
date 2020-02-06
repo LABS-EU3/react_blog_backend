@@ -40,7 +40,7 @@ router.post("/", authenticate, async (req, res, next) => {
   try {
     const userId = req.user.subject;
     Promise.all(
-      newFollowIds.map(id => {
+      newFollowIds.follow.map(id => {
         service.addFollower({ followerId: userId, followingId: id });
       })
     )
@@ -58,7 +58,7 @@ router.get("/potential", authenticate, async (req, res, next) => {
       res.status(200).json(response.slice(0,10))
   }
   catch(error) {
-      next(error);
+    next(error)
   }
 });
 

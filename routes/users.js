@@ -38,7 +38,6 @@ router.get('/basic', async (req, res, next) => {
   try {
     const token = decode(req.headers.authorization);
     const user = await service.getBasic(token.subject);
-    console.log('hooo');
     res.status(200).json(user);
   } catch (err) {
     next(err);
